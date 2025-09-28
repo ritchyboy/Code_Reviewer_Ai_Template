@@ -8,6 +8,7 @@ namespace CodeReviewerAI.Services.IServices
 {
     public interface IGeminiServices
     {
-        public Task GetFileReviewAsync();
+        public string InitPrompt(string message);
+        public Task<string> GetReviewFromCode(string codeToReview);
     }
 }

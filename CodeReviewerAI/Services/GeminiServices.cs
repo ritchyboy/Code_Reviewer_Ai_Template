@@ -7,56 +7,89 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
+using System.IO;
+using System.Globalization;
 
 namespace CodeReviewerAI.Services
 {
-    public class Content
-    {
-        public Part[] parts; 
-    }
-
-    public class Part
-    {
-        public string? text { get; set; }
-    }
-
-    public class GeminiGenerateText
-    {
-        public Content[] contents;
-    }
 
     public class GeminiServices : IGeminiServices
     {
+        
+        private string GEMINI_API_KEY;
+        public string valueInString;
         public string url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-        public string geminiMessage = "say hola and nothing else,this is a test";
+        public static string filePath = @"C:\Users\Shiin\source\temp\CodeReviewerAI\CodeReviewerAI\Config\Prompt.txt";
+        string fileContent = File.ReadAllText(filePath);    
 
-        private readonly IHttpClientFactory _httpClientFactory;
-
-        public GeminiServices(IHttpClientFactory httpClientFactory)
+        public string InitPrompt(string message)
         {
-            _httpClientFactory = httpClientFactory;
+             string tempFileContent = fileContent.Replace("CODE_CONTENT", message);
+             string requestString = @"{
+             ""contents"": [
+             {
+                   ""parts"": [
+                   {
+                        ""text"":  """ + tempFileContent + @"""
+             }
+                        ]
+                        }
+             ]
+            
+             }";
+            return requestString;
         }
 
-        public async Task GetFileReviewAsync()
+        
+
+        public async Task<string> GetReviewFromCode(string codeToReview)
         {
-            var ClientToGemini = _httpClientFactory.CreateClient();
+            string requestString = InitPrompt(codeToReview);    
+            StringContent content = new StringContent(requestString); 
+            using (HttpClient client = new HttpClient())
+            {
+                if (string.IsNullOrEmpty(GEMINI_API_KEY))
+                {
+                    Console.WriteLine("GEMINI API KEY is empty or null");
+                    client.Dispose();
+                }
+                else
+                   client.DefaultRequestHeaders.Add("x-goog-api-key", GEMINI_API_KEY);
 
-            var geminiRequest = new GeminiGenerateText
-            {
-                contents = [new Content { parts = [new Part { text = geminiMessage }] }]
-            };
-
-            var response = await ClientToGemini.PostAsJsonAsync(url, geminiRequest);
-            if (response.IsSuccessStatusCode)
-            {
-                string? value = response.Content.ReadAsStreamAsync().ToString();
-                Console.WriteLine(value);
+                try
+                {
+                    var result = await client.PostAsync(url, content);
+                    if (result.IsSuccessStatusCode)
+                    {
+                       valueInString = await result.Content.ReadAsStringAsync();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error: {result.StatusCode}");
+                    }
+                }
+                catch (HttpRequestException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
-            else
+            string? promptResult;
+            using (JsonDocument document = JsonDocument.Parse(valueInString))
             {
-                Console.WriteLine("Error: Your request could not be post");
+                JsonElement candidates = document.RootElement.GetProperty("candidates");
+                JsonElement firstCandidates = candidates[0];
+                JsonElement element = firstCandidates.GetProperty("content");
+                JsonElement firstElement = element;
+                JsonElement parts = firstElement.GetProperty("parts");
+                JsonElement firstParts = parts[0];
+                JsonElement textElement = firstParts.GetProperty("text");
+                promptResult = textElement.GetString();
             }
+            return promptResult;
+        }
+        public string SET_API_KEY(string geminiApikey)
+        {
+            return GEMINI_API_KEY = geminiApikey;
         }
             
         
