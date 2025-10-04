@@ -10,8 +10,7 @@ namespace CodeReviewerAI
     {
         static void Main(string[] args)
         {     
-          string GEMINI_API_KEY = Environment.GetEnvironmentVariable("GEMINI_API_KEY").ToString();
-           
+            string GEMINI_API_KEY = Environment.GetEnvironmentVariable("GEMINI_API_KEY").ToString();
         }
 
     }
