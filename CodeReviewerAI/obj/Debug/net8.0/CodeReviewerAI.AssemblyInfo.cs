@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CodeReviewerAI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+51b14bc4899721d7d6540486f74da54a713cfd26")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6d6627c9bee977bd5dd618e28011a24c61c6827b")]
 [assembly: System.Reflection.AssemblyProductAttribute("CodeReviewerAI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CodeReviewerAI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

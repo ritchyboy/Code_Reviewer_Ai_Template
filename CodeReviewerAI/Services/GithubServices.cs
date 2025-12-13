@@ -10,9 +10,9 @@ namespace CodeReviewerAI.Services
     public class GithubServices
     {
         private string _GITHUB_API_KEY;
+        string githubUrl = @"https://api.github.com/repos/OWNER/REPO/pulls/PULL_NUMBER/comments";
         public void PostComment(string comment)
         {
-            string githubUrl = @"https://api.github.com/repos/OWNER/REPO/pulls/PULL_NUMBER/comments";
             StringContent content = new StringContent(comment);
             using (HttpClient client = new HttpClient())
             {

@@ -1,0 +1,17 @@
+﻿### Language Strategy: C# (.NET Core / Unity)
+
+**Primary Focus:** Modern C# and .NET Standards.
+
+**Review Checklist:**
+1.  **Architecture:**
+    * Violations of SOLID, DRY, and KISS.
+    * Dependency Injection usage.
+2.  **C# Best Practices:**
+    * Naming conventions (PascalCase for methods, camelCase for locals).
+    * Proper use of LINQ vs Loops.
+3.  **Async/Await:**
+    * Flag any blocking calls like `.Result` or `.Wait()`.
+    * Ensure `await` is used all the way up the stack.
+4.  **Security:**
+    * **CRITICAL:** Redact secrets/passwords.
+    * Check for SQL Injection risks.

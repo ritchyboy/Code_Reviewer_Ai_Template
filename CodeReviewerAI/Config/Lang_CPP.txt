@@ -1,0 +1,37 @@
+﻿### Language & Domain Strategy: C++ (Robotics & Game Engine Focus)
+
+**Primary Focus:** C++14 Standard.
+**Domains:** Real-time Systems, Game Engines, Embedded Robotics.
+
+**Core Philosophy:** Review code for **Deterministic Behavior**, **Memory Safety**, and **Hardware Efficiency**. In these domains, a "garbage collection" pause or a hidden memory allocation can crash a drone or stutter a game frame.
+
+**Review Checklist:**
+
+1.  **Memory Management (RAII is King):**
+    * **Strictly enforce RAII.** No manual `new` or `delete`.
+    * **Smart Pointers:** Prefer `std::unique_ptr` (zero overhead). Use `std::shared_ptr` sparingly (atomic overhead).
+    * **Raw Pointers:** Acceptable ONLY for non-owning references (e.g., passing an object to a function) or hardware register access. Flag any raw pointer that implies ownership.
+
+2.  **Performance & Real-Time Constraints:**
+    * **Allocations:** Flag any dynamic memory allocation (`std::vector`, `std::string`, `new`) inside hot loops (e.g., `Update()` functions). Suggest stack allocation or `std::array`.
+    * **Copying:** Identify unnecessary object copies. Suggest `const reference` (`const T&`) for function parameters.
+    * **Move Semantics:** Ensure `std::move` is used correctly to transfer ownership rather than copy.
+
+3.  **C++14 Specifics:**
+    * Use `std::make_unique` (C++14) instead of `new`.
+    * Use `auto` for iterator types or complex templates, but explicitly type variables where clarity is needed (e.g., `uint32_t` for hardware registers).
+    * Prioritize `constexpr` for compile-time constants.
+
+4.  **Embedded/Robotics Safety:**
+    * **Volatile:** Ensure `volatile` is used correctly for memory-mapped hardware registers.
+    * **Exceptions:** Flag usage of `try/catch` or `throw`. In embedded/games, we typically disable exceptions (`-fno-exceptions`). Suggest error codes or `std::optional`-like patterns instead.
+    * **Casting:** Flag C-style casts (`(int)x`). Demand C++ casts (`static_cast`, `reinterpret_cast`) for type safety.
+
+5.  **Admitting Limits (The "Right Direction" Rule):**
+    * If the code interacts with specific hardware (e.g., I2C, SPI, specific sensors) or Assembly, and you are unsure of the implementation:
+        * **Do not guess.**
+        * **Explicitly state:** "This looks like hardware-specific implementation. Please verify against the datasheet or HAL documentation."
+        * Suggest *where* to look (e.g., "Check the STM32 Reference Manual for this register offset.")
+
+**Output Override:**
+If you see a "High Severity" memory leak or race condition, emphasize it above all else.
