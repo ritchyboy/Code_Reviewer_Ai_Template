@@ -1,0 +1,16 @@
+## Ignore Visual Studio temporary files, build results, and user settings
+.vs/
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userprefs
+
+## Ignore environment variables and secrets (Safety First!)
+.env
+.DS_Store
+
+## Ignore Test Results (but KEEP the test code!)
+TestResults/
