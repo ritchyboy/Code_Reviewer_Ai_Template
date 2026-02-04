@@ -1,31 +1,21 @@
-﻿using Microsoft.Extensions.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CodeReviewerAI.Services.IServices;
+using Octokit;
 
 namespace CodeReviewerAI.Services
 {
-    public class GithubServices
+    public class GithubServices: IGithubServices
     {
-        private string _GITHUB_API_KEY;
-        string githubUrl = @"https://api.github.com/repos/OWNER/REPO/pulls/PULL_NUMBER/comments";
-        public void PostComment(string comment)
+        private readonly GitHubClient _client;
+        public string _appName = "CodeReviewerAI";
+        public GithubServices(string appName)
         {
-            StringContent content = new StringContent(comment);
-            using (HttpClient client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer <{_GITHUB_API_KEY}>");
-                client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
-                client.PostAsync(githubUrl, content);
-            }
+            _appName = appName;
+            _client = new GitHubClient(new ProductHeaderValue(appName));
         }
 
-        public string SET_API_KEY(string GITHUBAPIKEY)
+        public Task<List<string>> pullRequestDiffs(string owner, string repoName, int prNumber)
         {
-            return _GITHUB_API_KEY = GITHUBAPIKEY; 
+            throw new NotImplementedException();
         }
     }
 }

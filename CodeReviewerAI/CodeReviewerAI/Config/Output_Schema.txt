@@ -17,3 +17,5 @@ Do not include any conversational text before or after the JSON.
 **Logic Rules for Fields:**
 1. If "risk_score" is above 70, "is_approved" must be false.
 2. "markdown_review" is what will be posted to GitHub. Make it professional and direct.
+
+### INPUT CODE TO ANALYZE:
