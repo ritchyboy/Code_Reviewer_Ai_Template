@@ -2,7 +2,7 @@
 
 namespace CodeReviewerAI.Tests.Services
 {
-    public class GithubApiTest
+    public class GithubServiceTest
     {
 
         [Fact]

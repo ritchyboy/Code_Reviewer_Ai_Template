@@ -13,33 +13,20 @@ namespace CodeReviewerAI
     {
         static async Task Main(string[] args)
         {
-            
-            try
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string testableFile = Path.Combine(basePath,"Test","ChatServerMain.cs");
+            if (!File.Exists(testableFile))
             {
-                string path = "C:\\Users\\Ritch\\source\\nullashrepos\\CodeReviewerAI\\CodeReviewerAI\\Config\\Base_Persona.txt";
-                string path2 = "C:\\Users\\Ritch\\source\\nullashrepos\\CodeReviewerAI\\CodeReviewerAI\\Config\\Lang_CSharp.txt";
-                string path3 = "C:\\Users\\Ritch\\source\\nullashrepos\\CodeReviewerAI\\CodeReviewerAI\\Config\\Output_Schema.txt";
-                string codePath = "C:\\Users\\Ritch\\source\\nullashrepos\\CodeReviewerAI\\CodeReviewerAI.Tests\\Test\\ChatClientMain.cs";
-                string codePath2 = "C:\\Users\\Ritch\\source\\nullashrepos\\CodeReviewerAI\\CodeReviewerAI.Tests\\Test\\ChatServerMain.cs";
-
-
-                string readFile = await File.ReadAllTextAsync(path);
-                string readFile2 = await File.ReadAllTextAsync(path2);
-                string readFile3 = await File.ReadAllTextAsync(path3);
-                string readCode = await File.ReadAllTextAsync(codePath);
-                string readCode2 = await File.ReadAllTextAsync(codePath2);
-
-                string fullFile = readFile +"/n"+ readFile2 + "/n" + readFile3 + "\n" + readCode;
-
-                
-                Console.WriteLine(fullFile);
-                Console.ReadLine();
+                throw new FileNotFoundException("The file is in the folder Test was not found");
             }
-            catch (FileNotFoundException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            
+            string readTestableFile = File.ReadAllText(testableFile);
+            FileInfo testInfo = new FileInfo(testableFile);
+
+            var prompt = new PromptService();
+            string fullPromptMessage = prompt.promptManager(testInfo) + "\n" + readTestableFile;
+
+            Console.WriteLine(fullPromptMessage);
+            Console.ReadLine();
         }
 
     }
