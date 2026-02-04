@@ -2,6 +2,8 @@
 using CodeReviewerAI.Test.Services; // Ensure this matches your namespace
 using System;
 using System.Threading.Tasks;
+using CodeReviewerAI.Services;
+using System.IO;
 
 namespace CodeReviewerAI.Test.Services
 {
@@ -25,7 +27,7 @@ namespace CodeReviewerAI.Test.Services
             string key = GetApiKey();
 
             // Act
-            var service = new GeminiServices2(key); // Assuming your cleaned-up class looks like this
+            var service = new GeminiServices(key); // Assuming your cleaned-up class looks like this
 
             // Assert
             Assert.NotNull(service);
@@ -36,13 +38,26 @@ namespace CodeReviewerAI.Test.Services
         public async Task AnalyzeDiff_Returns_Real_Response_From_Google()
         {
             // Arrange
-            var service = new GeminiServices2(GetApiKey());
+            var service = new GeminiServices(GetApiKey());
 
-            string path = "C:\\Users\\Ritch\\source\\nullashrepos\\CodeReviewerAI\\CodeReviewerAI.Tests\\Test\\ChatClientMain.cs";
-            string fileRead = await File.ReadAllTextAsync(path);
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string clientPathTest = Path.Combine(basePath,"Test", "ChatServerMain.cs");
+            if (!File.Exists(clientPathTest))
+            {
+                throw new FileNotFoundException("The test file was not found");
+            }
+
+            FileInfo filePropriety = new FileInfo(clientPathTest);
+
+            var promptService = new PromptService();
+            string generalPrompt = promptService.promptManager(filePropriety);
+            
+
+            string testableCode = await File.ReadAllTextAsync(clientPathTest);
+            string promptWithCode = generalPrompt + "\n" + testableCode;
 
             // Act
-            var result = await service.AnalyzeCodeToReview(fileRead);
+            var result = await service.AnalyzeCodeToReview(testableCode);
 
             // Assert
             Assert.NotNull(result);

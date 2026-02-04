@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using CodeReviewerAI.Models;
 namespace CodeReviewerAI.Services.IServices
 {
-    public interface IGeminiServices
-    {
-        public string InitPrompt(string message);
-        public Task<string> GetReviewFromCode(string codeToReview);
-    }
-}
+     public interface IGeminiServices
+     {
+         public Task<ReviewResult> AnalyzeCodeToReview(string reviewCode);
+     }
+} 

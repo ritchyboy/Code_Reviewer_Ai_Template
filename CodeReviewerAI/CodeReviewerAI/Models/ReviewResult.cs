@@ -5,7 +5,7 @@ namespace CodeReviewerAI.Models
     public class ReviewResult
     {
         [JsonPropertyName("is_approved")]
-        public bool isApproved { get; set; }
+        public bool IsApproved { get; set; }
 
         [JsonPropertyName("risk_score")]
         public int RiskScore { get; set; }
