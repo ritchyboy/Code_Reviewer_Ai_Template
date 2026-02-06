@@ -1,4 +1,5 @@
-﻿using CodeReviewerAI.Services;
+﻿using CodeReviewerAI.Models;
+using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.IServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +12,16 @@ namespace CodeReviewerAI
 {
     internal class Program
     {
+        private static string GetApiKey()
+        {
+            var key = Environment.GetEnvironmentVariable("GEMINI_API_KEY", EnvironmentVariableTarget.User);
+
+            // Helpful error if you forgot to restart Visual Studio
+            if (string.IsNullOrEmpty(key))
+                throw new InvalidOperationException("API Key not found! Did you restart Visual Studio/Terminal after setting 'GEMINI_API_KEY'?");
+
+            return key;
+        }
         static async Task Main(string[] args)
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -25,7 +36,23 @@ namespace CodeReviewerAI
             var prompt = new PromptService();
             string fullPromptMessage = prompt.promptManager(testInfo) + "\n" + readTestableFile;
 
-            Console.WriteLine(fullPromptMessage);
+            /*    var service = new GeminiServices(GetApiKey());
+                ReviewResult geminiResponse = await service.AnalyzeCodeToReview(fullPromptMessage);
+
+                Console.WriteLine("IsApproved: " + geminiResponse.IsApproved);
+                Console.WriteLine("RiskLevel: " + geminiResponse.RiskLevel);
+                Console.WriteLine("RiskScore: " + geminiResponse.RiskScore);
+                Console.WriteLine("Summary: " + geminiResponse.Summary);
+                Console.WriteLine("MarkdownReview: " + geminiResponse.MarkdownReview);
+                Console.ReadLine();
+            */
+            string githubToken = Environment.GetEnvironmentVariable("Github_Token",
+            EnvironmentVariableTarget.User);
+            var githubService = new GithubServices(githubToken);
+            string dataRetrieveTest = githubService.getDataFromUser();
+            string currentRequestInfo = githubService.getApiInfo();
+            Console.WriteLine(dataRetrieveTest);
+            Console.WriteLine(currentRequestInfo);
             Console.ReadLine();
         }
 
