@@ -39,7 +39,7 @@ namespace CodeReviewerAI.Services
 
             return outputPrompt;
         }
-        public string languageManagerPrompt(FileInfo fileInfo)
+        public string languageManagerPrompt(string fileExt)
         {
             string languagePrompt = string.Empty;
             string csharp_Lang_Path = Path.Combine(baseApplicationPath,"Config","Lang_CSharp.txt");
@@ -50,7 +50,7 @@ namespace CodeReviewerAI.Services
                 throw new FileNotFoundException("Language file was not found in the Config folder");
             }
 
-            if (fileInfo.Extension.ToLower() == ".cs")
+            if (fileExt.ToLower().EndsWith(".cs"))
             {
                 languagePrompt = File.ReadAllText(csharp_Lang_Path);
             }
@@ -62,9 +62,9 @@ namespace CodeReviewerAI.Services
             return languagePrompt;
         }
 
-        public string promptManager(FileInfo info)
+        public async Task<string> promptManager(string fileExt)
         {
-            string fullPrompt = getBasePrompt()+ "\n" + languageManagerPrompt(info)
+            string fullPrompt = getBasePrompt()+ "\n" + languageManagerPrompt(fileExt)
              +"\n" + getOutputSchemaPrompt();
 
             return fullPrompt;

@@ -22,6 +22,13 @@ namespace CodeReviewerAI
 
             return key;
         }
+        private static string GetToken()
+        {
+            string token = Environment.GetEnvironmentVariable("Github_Token",
+                EnvironmentVariableTarget.User);
+
+            return token;
+        }
         static async Task Main(string[] args)
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -31,10 +38,9 @@ namespace CodeReviewerAI
                 throw new FileNotFoundException("The file is in the folder Test was not found");
             }
             string readTestableFile = File.ReadAllText(testableFile);
-            FileInfo testInfo = new FileInfo(testableFile);
 
             var prompt = new PromptService();
-            string fullPromptMessage = prompt.promptManager(testInfo) + "\n" + readTestableFile;
+            string fullPromptMessage = prompt.promptManager(testableFile) + "\n" + readTestableFile;
 
             /*    var service = new GeminiServices(GetApiKey());
                 ReviewResult geminiResponse = await service.AnalyzeCodeToReview(fullPromptMessage);
@@ -45,7 +51,7 @@ namespace CodeReviewerAI
                 Console.WriteLine("Summary: " + geminiResponse.Summary);
                 Console.WriteLine("MarkdownReview: " + geminiResponse.MarkdownReview);
                 Console.ReadLine();
-            */
+            
             string githubToken = Environment.GetEnvironmentVariable("Github_Token",
             EnvironmentVariableTarget.User);
             var githubService = new GithubServices(githubToken);
@@ -53,6 +59,22 @@ namespace CodeReviewerAI
             string currentRequestInfo = githubService.getApiInfo();
             Console.WriteLine(dataRetrieveTest);
             Console.WriteLine(currentRequestInfo);
+            Console.ReadLine();
+            */
+
+            var geminiService = new GeminiServices(GetApiKey());
+            var githubService = new GithubServices(GetToken());
+            ReviewerService reviewer = new ReviewerService(geminiService,githubService);
+
+
+            string owner = "ritchyboy";
+            string reposName = "SandBox_Test";
+            int prNumber = 1;
+
+
+            ReviewResult result = await reviewer.ReviewPullrequestAsync(owner, reposName, prNumber);
+
+            Console.WriteLine(result.MarkdownReview);
             Console.ReadLine();
         }
 

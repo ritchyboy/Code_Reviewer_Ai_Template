@@ -26,7 +26,7 @@ namespace CodeReviewerAI.Services
             {
                 if (file.Status == "removed" || IsBinary(file.FileName)) continue;
 
-                string fileHeader = $"Code from: {file.FileName} \n";
+                string fileHeader = $"---FILE: {file.FileName}---\n";
                 if (string.IsNullOrEmpty(file.Patch))
                 {
                     Console.WriteLine("No change has been detected");
@@ -34,7 +34,7 @@ namespace CodeReviewerAI.Services
                 string filePatch = file.Patch;
                 var fileInfoData = new GithubFileChange()
                 {
-                    fileName = fileHeader,
+                    fileName = file.FileName,
                     patch = filePatch
                 };
                 diffs.Add(fileInfoData);

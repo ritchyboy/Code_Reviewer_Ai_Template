@@ -47,10 +47,9 @@ namespace CodeReviewerAI.Test.Services
                 throw new FileNotFoundException("The test file was not found");
             }
 
-            FileInfo filePropriety = new FileInfo(clientPathTest);
 
             var promptService = new PromptService();
-            string generalPrompt = promptService.promptManager(filePropriety);
+            string generalPrompt = await promptService.promptManager(clientPathTest);
             
 
             string testableCode = await File.ReadAllTextAsync(clientPathTest);
