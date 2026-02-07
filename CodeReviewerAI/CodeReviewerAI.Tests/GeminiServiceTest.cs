@@ -11,7 +11,11 @@ namespace CodeReviewerAI.Test.Services
     {
         private string GetApiKey()
         {
-            var key = Environment.GetEnvironmentVariable("GEMINI_API_KEY", EnvironmentVariableTarget.User);
+            var key = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
+
+            if(string.IsNullOrEmpty(key))
+               key = Environment.GetEnvironmentVariable("GEMINI_API_KEY", EnvironmentVariableTarget.User);
+              
 
             // Helpful error if you forgot to restart Visual Studio
             if (string.IsNullOrEmpty(key))

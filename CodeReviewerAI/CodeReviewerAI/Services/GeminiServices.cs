@@ -17,6 +17,7 @@ public class GeminiServices: IGeminiServices
 	{
 		_client = new Client(apiKey: key);
 	}
+
 	public async Task<ReviewResult> AnalyzeCodeToReview(string reviewCode)
 	{
         var response = await _client.Models.GenerateContentAsync(
