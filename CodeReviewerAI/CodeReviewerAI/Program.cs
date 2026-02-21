@@ -15,20 +15,28 @@ namespace CodeReviewerAI
         static async Task Main(string[] args)
         {
 
-            var geminiService = new GeminiServices(GetApiKey());
-            var githubService = new GithubServices(GetToken());
-            ReviewerService reviewer = new ReviewerService(geminiService,githubService);
+            ReviewerService reviewer = new ReviewerService(new GeminiServices(GetApiKey()),new GithubServices(GetToken()));
+            if (args.Length != 3)
+            {
+                Console.Error.WriteLine("Missing argument in application like owner , reposName and prNumber");
+                Environment.Exit(1);
+            }
+                if (!int.TryParse(args[2],out int prNumberOutput))
+                {
+                    Console.Error.WriteLine("prNumber is not a valid integer");
+                    Environment.Exit(1);
+                }
+                
+                    string owner = args[0];
+                    string reposName = args[1];
+                    int prNumber = prNumberOutput;
 
 
-            string owner = "ritchyboy";
-            string reposName = "SandBox_Test";
-            int prNumber = 1;
+                    ReviewResult result = await reviewer.ReviewPullrequestAsync(owner, reposName, prNumber);
 
+                    Console.WriteLine(result.MarkdownReview);
+                    Console.ReadLine();
 
-            ReviewResult result = await reviewer.ReviewPullrequestAsync(owner, reposName, prNumber);
-
-            Console.WriteLine(result.MarkdownReview);
-            Console.ReadLine();
         }
         private static string GetApiKey()
         {

@@ -21,10 +21,14 @@ namespace CodeReviewerAI.Services
             _geminiServices = geminiServices;
             _githubServices = githubServices;
         }
+        public async Task<ReviewResult> Run(string owner,string reposName,int prNumber)
+        {
+            var result = await ReviewPullrequestAsync(owner, reposName, prNumber);
+            return result;
+        }
         public async Task<ReviewResult> ReviewPullrequestAsync(string owner,string reposName,int prNumber)
         {
             ReviewResult pullrequestComment = new ReviewResult();
-            string prompt = string.Empty;
             string reviewCode = string.Empty;
 
             var fileList = new List<GithubFileChange>();
@@ -40,12 +44,12 @@ namespace CodeReviewerAI.Services
             {
                 string firstFile = fileList[0].fileName;
                 var promptService = new PromptService();
-                prompt = await promptService.promptManager(firstFile);
+
                 foreach (var file in fileList)
                 {
                     reviewCode += file.fileName + file.patch + "\n";
                 }
-                string fullPrompt = prompt + "\n" + reviewCode;
+                string fullPrompt = await promptService.promptManager(firstFile,reviewCode);
 
                 pullrequestComment = await _geminiServices.AnalyzeCodeToReview(fullPrompt);
 

@@ -1,9 +1,10 @@
-﻿using Xunit;
+﻿using CodeReviewerAI.Services;
+using CodeReviewerAI.Services.IServices;
 using CodeReviewerAI.Test.Services; // Ensure this matches your namespace
 using System;
-using System.Threading.Tasks;
-using CodeReviewerAI.Services;
 using System.IO;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace CodeReviewerAI.Test.Services
 {
@@ -51,13 +52,10 @@ namespace CodeReviewerAI.Test.Services
                 throw new FileNotFoundException("The test file was not found");
             }
 
+            string testableCode = await File.ReadAllTextAsync(clientPathTest);
 
             var promptService = new PromptService();
-            string generalPrompt = await promptService.promptManager(clientPathTest);
-            
-
-            string testableCode = await File.ReadAllTextAsync(clientPathTest);
-            string promptWithCode = generalPrompt + "\n" + testableCode;
+            string generalPrompt = await promptService.promptManager(clientPathTest,testableCode);
 
             // Act
             var result = await service.AnalyzeCodeToReview(testableCode);

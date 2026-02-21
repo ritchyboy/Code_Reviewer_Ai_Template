@@ -62,10 +62,10 @@ namespace CodeReviewerAI.Services
             return languagePrompt;
         }
 
-        public async Task<string> promptManager(string fileExt)
+        public async Task<string> promptManager(string fileExt,string codeSample)
         {
-            string fullPrompt = getBasePrompt()+ "\n" + languageManagerPrompt(fileExt)
-             +"\n" + getOutputSchemaPrompt();
+            string fullPrompt = getBasePrompt() + "\n" + languageManagerPrompt(fileExt)
+             + "\n" + getOutputSchemaPrompt() + "\n" + codeSample;
 
             return fullPrompt;
         }
