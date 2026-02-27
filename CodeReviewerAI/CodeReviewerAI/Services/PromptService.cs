@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace CodeReviewerAI.Services
     {
         private readonly string baseApplicationPath = AppDomain.CurrentDomain.BaseDirectory;
 
-        public string getBasePrompt()
+        public async Task<string> getBasePromptAsync()
         {
             string basePrompt = string.Empty;
             string basePromptPath = Path.Combine(baseApplicationPath, "Config", "Base_Persona.txt");
@@ -21,12 +22,12 @@ namespace CodeReviewerAI.Services
             {
                 throw new FileNotFoundException("Base_Persona.txt was not found in the Config folder");
             }
-            basePrompt = File.ReadAllText(basePromptPath);
+            basePrompt = await File.ReadAllTextAsync(basePromptPath);
 
             return basePrompt;
         }
 
-        public string getOutputSchemaPrompt()
+        public async Task<string> getOutputSchemaPromptAsync()
         {
             string outputPrompt = string.Empty;
             string output_Schema_Path = Path.Combine(baseApplicationPath, "Config", "Output_Schema.txt");
@@ -35,11 +36,11 @@ namespace CodeReviewerAI.Services
             {
                 throw new FileNotFoundException("Output_Schema.txt was not found in the Config Folder");
             }
-            outputPrompt = File.ReadAllText(output_Schema_Path);
+            outputPrompt = await File.ReadAllTextAsync(output_Schema_Path);
 
             return outputPrompt;
         }
-        public string languageManagerPrompt(string fileExt)
+        public async Task<string> languageManagerPromptAsync(string fileExt)
         {
             string languagePrompt = string.Empty;
             string csharp_Lang_Path = Path.Combine(baseApplicationPath,"Config","Lang_CSharp.txt");
@@ -52,22 +53,25 @@ namespace CodeReviewerAI.Services
 
             if (fileExt.ToLower().EndsWith(".cs"))
             {
-                languagePrompt = File.ReadAllText(csharp_Lang_Path);
+                languagePrompt = await File.ReadAllTextAsync(csharp_Lang_Path);
             }
             else
             {
-                languagePrompt = File.ReadAllText(cpp_Lang_Path);
+                languagePrompt = await File.ReadAllTextAsync(cpp_Lang_Path);
             }
 
             return languagePrompt;
         }
 
-        public async Task<string> promptManager(string fileExt,string codeSample)
+        public async Task<string> promptManagerAsync(string fileExt,string codeSample)
         {
-            string fullPrompt = getBasePrompt() + "\n" + languageManagerPrompt(fileExt)
-             + "\n" + getOutputSchemaPrompt() + "\n" + codeSample;
+            StringBuilder fullPrompt = new StringBuilder();
+            var getBasePrompt = fullPrompt.AppendLine(getBasePromptAsync().GetAwaiter().GetResult());
+            var getLangPrompt = fullPrompt.AppendLine(languageManagerPromptAsync(fileExt).GetAwaiter().GetResult());
+            var getOutputPrompt = fullPrompt.AppendLine(getOutputSchemaPromptAsync().GetAwaiter().GetResult());
+            var getCodeSample = fullPrompt.AppendLine(codeSample);
 
-            return fullPrompt;
+            return fullPrompt.ToString();
         }
     }
 }

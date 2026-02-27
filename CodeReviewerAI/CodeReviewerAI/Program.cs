@@ -16,7 +16,7 @@ namespace CodeReviewerAI
         {
 
             ReviewerService reviewer = new ReviewerService(new GeminiServices(GetApiKey()),new GithubServices(GetToken()));
-            if (args.Length != 3)
+           /* if (args.Length != 3)
             {
                 Console.Error.WriteLine("Missing argument in application like owner , reposName and prNumber");
                 Environment.Exit(1);
@@ -30,9 +30,13 @@ namespace CodeReviewerAI
                     string owner = args[0];
                     string reposName = args[1];
                     int prNumber = prNumberOutput;
+           */
+                    string owner = "ritchyboy";
+                    string reposName = "SandBox_Test";
+                    int prNumber = 1;
 
 
-                    ReviewResult result = await reviewer.ReviewPullrequestAsync(owner, reposName, prNumber);
+            ReviewResult result = await reviewer.ReviewPullrequestAsync(owner, reposName, prNumber);
 
                     Console.WriteLine(result.MarkdownReview);
                     Console.ReadLine();

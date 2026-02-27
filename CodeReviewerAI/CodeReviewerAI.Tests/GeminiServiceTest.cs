@@ -55,7 +55,7 @@ namespace CodeReviewerAI.Test.Services
             string testableCode = await File.ReadAllTextAsync(clientPathTest);
 
             var promptService = new PromptService();
-            string generalPrompt = await promptService.promptManager(clientPathTest,testableCode);
+            string generalPrompt = await promptService.promptManagerAsync(clientPathTest,testableCode);
 
             // Act
             var result = await service.AnalyzeCodeToReview(testableCode);

@@ -40,7 +40,11 @@ namespace CodeReviewerAI.Services
             bool isFileExtensionMatch = fileList.All(ext => ext.fileName.
             EndsWith(new FileInfo(ext.fileName).Extension));
 
-            if (isFileExtensionMatch)
+            if (!isFileExtensionMatch)
+            {
+                return pullrequestComment;
+            }
+            else
             {
                 string firstFile = fileList[0].fileName;
                 var promptService = new PromptService();
@@ -49,13 +53,12 @@ namespace CodeReviewerAI.Services
                 {
                     reviewCode += file.fileName + file.patch + "\n";
                 }
-                string fullPrompt = await promptService.promptManager(firstFile,reviewCode);
+                string fullPrompt = await promptService.promptManagerAsync(firstFile, reviewCode);
 
                 pullrequestComment = await _geminiServices.AnalyzeCodeToReview(fullPrompt);
 
                 return pullrequestComment;
             }
-            return pullrequestComment;
 
         }
     }
