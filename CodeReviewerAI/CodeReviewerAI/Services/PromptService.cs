@@ -65,13 +65,18 @@ namespace CodeReviewerAI.Services
 
         public async Task<string> promptManagerAsync(string fileExt,string codeSample)
         {
-            StringBuilder fullPrompt = new StringBuilder();
-            var getBasePrompt = fullPrompt.AppendLine(getBasePromptAsync().GetAwaiter().GetResult());
-            var getLangPrompt = fullPrompt.AppendLine(languageManagerPromptAsync(fileExt).GetAwaiter().GetResult());
-            var getOutputPrompt = fullPrompt.AppendLine(getOutputSchemaPromptAsync().GetAwaiter().GetResult());
-            var getCodeSample = fullPrompt.AppendLine(codeSample);
+            string getBasePrompt = await getBasePromptAsync();
+            string getLangPrompt = await languageManagerPromptAsync(fileExt);
+            string getOutputPrompt = await getOutputSchemaPromptAsync();
 
-            return fullPrompt.ToString();
+
+            StringBuilder fullPromptBuilder = new StringBuilder();
+            fullPromptBuilder.AppendLine(getBasePrompt);
+            fullPromptBuilder.AppendLine(getLangPrompt);
+            fullPromptBuilder.AppendLine(getOutputPrompt);
+            fullPromptBuilder.AppendLine(codeSample);
+
+            return fullPromptBuilder.ToString();
         }
     }
 }
