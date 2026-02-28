@@ -29,10 +29,11 @@ namespace CodeReviewerAI.Tests
         {
             var geminiService = new GeminiServices(GetApiKey());
             var githubService = new GithubServices(GetToken());
+            var promptService = new PromptService();
 
             // ACT
             
-           var service = new ReviewerService(geminiService, githubService);
+           var service = new ReviewerService(geminiService, githubService,promptService);
 
             Assert.NotNull(service);
         }
@@ -45,9 +46,8 @@ namespace CodeReviewerAI.Tests
             int prNumber = 1;
 
             // Service
-            var geminiService = new GeminiServices(GetApiKey());
-            var githubService = new GithubServices(GetToken());
-            var ReviewerService = new ReviewerService(geminiService,githubService);
+            var ReviewerService = new ReviewerService(new GeminiServices(GetApiKey()),
+            new GithubServices(GetToken()),new PromptService());
 
 
             ReviewResult result = await ReviewerService.ReviewPullrequestAsync(owner,reposName,prNumber);

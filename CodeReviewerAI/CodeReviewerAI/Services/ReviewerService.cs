@@ -16,10 +16,13 @@ namespace CodeReviewerAI.Services
         private IGithubServices _githubServices;
         private IPromptService _promptService;
 
-        public ReviewerService(IGeminiServices geminiServices,IGithubServices githubServices)
+        public ReviewerService(IGeminiServices geminiServices,IGithubServices githubServices,
+        IPromptService promptService)
         {
             _geminiServices = geminiServices;
             _githubServices = githubServices;
+            _promptService = promptService;
+
         }
         public async Task<ReviewResult> Run(string owner,string reposName,int prNumber)
         {
@@ -47,13 +50,12 @@ namespace CodeReviewerAI.Services
             else
             {
                 string firstFile = fileList[0].fileName;
-                var promptService = new PromptService();
 
                 foreach (var file in fileList)
                 {
                     reviewCode += file.fileName + file.patch + "\n";
                 }
-                string fullPrompt = await promptService.promptManagerAsync(firstFile, reviewCode);
+                string fullPrompt = await _promptService.promptManagerAsync(firstFile, reviewCode);
 
                 pullrequestComment = await _geminiServices.AnalyzeCodeToReview(fullPrompt);
 

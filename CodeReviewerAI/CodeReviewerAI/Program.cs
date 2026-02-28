@@ -15,7 +15,8 @@ namespace CodeReviewerAI
         static async Task Main(string[] args)
         {
 
-            ReviewerService reviewer = new ReviewerService(new GeminiServices(GetApiKey()),new GithubServices(GetToken()));
+            ReviewerService reviewer = new ReviewerService(new GeminiServices(GetApiKey()),
+            new GithubServices(GetToken()),new PromptService());
            /* if (args.Length != 3)
             {
                 Console.Error.WriteLine("Missing argument in application like owner , reposName and prNumber");
