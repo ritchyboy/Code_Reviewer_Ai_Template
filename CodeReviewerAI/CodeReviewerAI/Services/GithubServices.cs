@@ -29,7 +29,7 @@ namespace CodeReviewerAI.Services
                 string fileHeader = $"---FILE: {file.FileName}---\n";
                 if (string.IsNullOrEmpty(file.Patch))
                 {
-                    Console.WriteLine("No change has been detected");
+                    Console.WriteLine($"{file.FileName}: No change has been detected");
                 }
                 string filePatch = file.Patch;
                 var fileInfoData = new GithubFileChange()

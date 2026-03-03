@@ -7,10 +7,10 @@ namespace CodeReviewerAI.Tests.Services
     {
         private string GetGithubToken()
         {
-            string token = Environment.GetEnvironmentVariable("Github_Token");
+            string token = Environment.GetEnvironmentVariable("GIT_TOKEN");
 
             if (string.IsNullOrEmpty(token))
-                token = Environment.GetEnvironmentVariable("Github_Token",
+                token = Environment.GetEnvironmentVariable("GIT_TOKEN",
                 EnvironmentVariableTarget.User);
 
             return token;

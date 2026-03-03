@@ -32,15 +32,19 @@ namespace CodeReviewerAI
                     string reposName = args[1];
                     int prNumber = prNumberOutput;
            */
-                    string owner = "ritchyboy";
-                    string reposName = "SandBox_Test";
-                    int prNumber = 1;
+            string owner = "ritchyboy";
+            string reposName = "SandBox_Test";
+            int prNumber = 2;
 
 
             ReviewResult result = await reviewer.ReviewPullrequestAsync(owner, reposName, prNumber);
 
-                    Console.WriteLine(result.MarkdownReview);
-                    Console.ReadLine();
+            Console.WriteLine(result.MarkdownReview);
+            Console.WriteLine("Summary: " + result.Summary);
+            Console.WriteLine("IsApproved: " + result.IsApproved);
+            Console.WriteLine("RiskLevel: " + result.RiskLevel);
+            Console.WriteLine("RiskScore: " + result.RiskScore);
+            Console.ReadLine();
 
         }
         private static string GetApiKey()
@@ -58,10 +62,10 @@ namespace CodeReviewerAI
         }
         private static string GetToken()
         {
-            string token = Environment.GetEnvironmentVariable("Github_Token");
+            string token = Environment.GetEnvironmentVariable("GIT_TOKEN");
 
             if(string.IsNullOrEmpty(token))
-                token = Environment.GetEnvironmentVariable("Github_Token",
+                token = Environment.GetEnvironmentVariable("GIT_TOKEN",
                 EnvironmentVariableTarget.User);
 
             if (string.IsNullOrEmpty(token))
