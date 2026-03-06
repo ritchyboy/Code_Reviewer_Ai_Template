@@ -34,6 +34,7 @@ namespace CodeReviewerAI.Services
                 string filePatch = file.Patch;
                 var fileInfoData = new GithubFileChange()
                 {
+                    fileHeader = fileHeader,
                     fileName = file.FileName,
                     patch = filePatch
                 };

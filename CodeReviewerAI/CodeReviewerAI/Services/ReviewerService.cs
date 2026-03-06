@@ -51,10 +51,12 @@ namespace CodeReviewerAI.Services
                                          group file by Path.GetExtension(file.fileName).ToLower() into g
                                          select new { Ext = g.Key, Files = g };
                                          
-
+                
                 foreach (var groupe in groupedByExtension)
                 {
                     StringBuilder groupOfFile = new StringBuilder();
+                    List<GithubFileChange> fileChange = groupe.Files.ToList();
+                    
                 }
                 return pullrequestComment;
             }
