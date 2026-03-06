@@ -16,8 +16,12 @@ namespace CodeReviewerAI.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            var connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING")
-            ?? "Server=localhost;Database=CodeReviewerDB;Trusted_Connection=True;TrustServerCertificate=True;";
+            var connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING"
+                ,EnvironmentVariableTarget.User);
+            }
 
             options.UseSqlServer(connectionString);
         }

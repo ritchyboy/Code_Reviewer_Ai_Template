@@ -20,10 +20,10 @@ public class GeminiServices: IGeminiServices
 		_client = new Client(apiKey: key);
 	}
 
-	public async Task<ReviewResult> AnalyzeCodeToReview(string reviewCode)
+	public async Task<ReviewResult> AnalyzeCodeToReview(string promptWithCode)
 	{
         var response = await _client.Models.GenerateContentAsync(
-        model:ModelName,contents:reviewCode
+        model:ModelName,contents:promptWithCode
     );
 		string rawResponse = response.Candidates[0].Content.Parts[0].Text;
 		if (string.IsNullOrEmpty(rawResponse))
