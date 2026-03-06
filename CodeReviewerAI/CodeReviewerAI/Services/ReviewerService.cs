@@ -3,6 +3,7 @@ using CodeReviewerAI.Services.IServices;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -45,6 +46,16 @@ namespace CodeReviewerAI.Services
 
             if (!isFileExtensionMatch)
             {
+                // Need a LinQ Group that group element by extention so c++ file with together ts together etc
+                var groupedByExtension = from file in fileList
+                                         group file by Path.GetExtension(file.fileName).ToLower() into g
+                                         select new { Ext = g.Key, Files = g };
+                                         
+
+                foreach (var groupe in groupedByExtension)
+                {
+                    StringBuilder groupOfFile = new StringBuilder();
+                }
                 return pullrequestComment;
             }
             else

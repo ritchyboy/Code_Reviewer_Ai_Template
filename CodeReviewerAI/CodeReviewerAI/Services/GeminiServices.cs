@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 
 public class GeminiServices: IGeminiServices
 {
-    public string geminiModel = "gemini-3-flash-preview";
+    public string Provider => "Google";
+    public string ModelName => "gemini-3-flash-preview";
+    public double Temperature => 1.0;
 	private readonly Client _client;
 
 	public GeminiServices(string key)
@@ -21,7 +23,7 @@ public class GeminiServices: IGeminiServices
 	public async Task<ReviewResult> AnalyzeCodeToReview(string reviewCode)
 	{
         var response = await _client.Models.GenerateContentAsync(
-        model:geminiModel,contents:reviewCode
+        model:ModelName,contents:reviewCode
     );
 		string rawResponse = response.Candidates[0].Content.Parts[0].Text;
 		if (string.IsNullOrEmpty(rawResponse))
