@@ -1,14 +1,18 @@
-﻿using CodeReviewerAI.Services;
+﻿using CodeReviewerAI.Models;
+using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.IServices;
 using CodeReviewerAI.Test.Services; // Ensure this matches your namespace
+using CodeReviewerAI.Tests.Integration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using Xunit;
+using FluentAssertions;
 
 namespace CodeReviewerAI.Test.Services
 {
-    public class GeminiServiceTests
+    public class GeminiServiceTests : BaseIntegrationTest
     {
         private string GetApiKey()
         {
@@ -64,6 +68,22 @@ namespace CodeReviewerAI.Test.Services
             Assert.NotNull(result);
             Assert.False(string.IsNullOrEmpty(result.MarkdownReview), "The AI returned an empty string!");
 
+        }
+
+        [Fact]
+        public async Task GetReviewAsync_WhenValidDiff_ShouldReturnAiAnalysis()
+        {
+           
+            var service = serviceProvider.GetRequiredService<IGeminiServices>();
+            var fakeDiff = "diff --git a/file.txt b/file.txt\n+ Console.WriteLine(\"Hello World\");";
+
+            
+            var result = await service.AnalyzeCodeToReview(fakeDiff);
+
+          
+            result.Should().NotBeNull();
+            
+            
         }
     }
 }

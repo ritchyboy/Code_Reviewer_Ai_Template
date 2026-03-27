@@ -1,9 +1,12 @@
 ﻿using CodeReviewerAI.Models;
 using CodeReviewerAI.Services;
+using CodeReviewerAI.Services.Gemini;
+using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Options;
 using Octokit;
 using System.Runtime.CompilerServices;
 using static System.Net.Mime.MediaTypeNames;
@@ -14,6 +17,10 @@ namespace CodeReviewerAI
     {
         static async Task Main(string[] args)
         {
+            var builder = new HostApplicationBuilder();
+            builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
+            builder.Services.Configure<GithubOptions>(builder.Configuration.GetSection("Github"));
+
 
             ReviewerService reviewer = new ReviewerService(new GeminiServices(GetApiKey()),
             new GithubServices(GetToken()),new PromptService());

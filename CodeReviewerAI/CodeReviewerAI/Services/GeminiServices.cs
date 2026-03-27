@@ -1,4 +1,5 @@
 ﻿using CodeReviewerAI.Models;
+using CodeReviewerAI.Services.Gemini;
 using CodeReviewerAI.Services.IServices;
 using Google.GenAI;
 using Google.GenAI.Types;
@@ -10,20 +11,26 @@ using System.Threading.Tasks;
 
 public class GeminiServices: IGeminiServices
 {
-    public string Provider => "Google";
-    public string ModelName => "gemini-3-flash-preview";
-    public double Temperature => 1.0;
+    
 	private readonly Client _client;
+    private readonly GeminiOptions _options;
 
 	public GeminiServices(string key)
 	{
 		_client = new Client(apiKey: key);
 	}
+    public GeminiServices(IOptions<GeminiOptions> options)
+    {
+        _options = options.Value;
+        ArgumentException.ThrowIfNullOrEmpty(_options.ApiKey, nameof(_options.ApiKey));
+        ArgumentException.ThrowIfNullOrEmpty(_options.Model, nameof(_options.Model));
+        _client = new Client(apiKey:_options.ApiKey);
+    }
 
-	public async Task<ReviewResult> AnalyzeCodeToReview(string promptWithCode)
+    public async Task<ReviewResult> AnalyzeCodeToReview(string request)
 	{
         var response = await _client.Models.GenerateContentAsync(
-        model:ModelName,contents:promptWithCode
+        model:_options.Model,contents:request
     );
 		string rawResponse = response.Candidates[0].Content.Parts[0].Text;
 		if (string.IsNullOrEmpty(rawResponse))
