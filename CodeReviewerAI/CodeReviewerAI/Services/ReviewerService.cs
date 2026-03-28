@@ -20,15 +20,14 @@ namespace CodeReviewerAI.Services
         private readonly IGithubServices _githubServices;
         private readonly IPromptService _promptService;
 
-         public ReviewerService(IGeminiServices geminiServices,IGithubServices githubServices,
-         IPromptService promptService)
+         public ReviewerService(IGeminiServices geminiServices,IGithubServices githubServices
+         ,IPromptService promptService)
          {
              _geminiServices = geminiServices;
              _githubServices = githubServices;
              _promptService = promptService;
-
          }
-        public async Task<ReviewResult> Run(string owner,string reposName,int prNumber)
+        public async Task<ReviewResult> RunAsync(string owner,string reposName,int prNumber)
         {
             var result = await ReviewPullrequestAsync(owner, reposName, prNumber);
             return result;

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CodeReviewerAI.Tests
 {
-    public class ReviewerServiceTest:BaseIntegrationTest
+    public class ReviewerServiceTest : BaseIntegrationTest
     {
 
         [Fact]
@@ -21,7 +21,8 @@ namespace CodeReviewerAI.Tests
             // ACT
             var geminiService = serviceProvider.GetRequiredService<IGeminiServices>();
             var githubService = serviceProvider.GetRequiredService<IGithubServices>();
-            var service = new ReviewerService(geminiService,githubService,new PromptService());
+            var promptService = serviceProvider.GetRequiredService<IPromptService>();
+            var service = new ReviewerService(geminiService,githubService,promptService);
 
             service.Should().NotBeNull();
         }
@@ -36,15 +37,14 @@ namespace CodeReviewerAI.Tests
             // Service
             var geminiService = serviceProvider.GetRequiredService<IGeminiServices>();
             var githubService = serviceProvider.GetRequiredService<IGithubServices>();
-            var service = new ReviewerService(geminiService, githubService, new PromptService());
-
+            var promptService = serviceProvider.GetRequiredService<IPromptService>();
+            var service = new ReviewerService(geminiService, githubService,promptService);
 
 
             ReviewResult result = await service.ReviewPullrequestAsync(owner,reposName,prNumber);
 
             result.Should().NotBeNull();
-            result.MarkdownReview.Should().NotBeNull();
-            Assert.False(string.IsNullOrEmpty(result.MarkdownReview),"Models didn't return a comment");
+            result.MarkdownReview.Should().NotBeNullOrEmpty("Models didn't return a comment");
         }
     }
 }

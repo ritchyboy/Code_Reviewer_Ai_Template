@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeReviewerAI.Tests.Services
 {
-    public class GithubServiceTest:BaseIntegrationTest
+    public class GithubServiceTest : BaseIntegrationTest
     {
 
         [Fact]

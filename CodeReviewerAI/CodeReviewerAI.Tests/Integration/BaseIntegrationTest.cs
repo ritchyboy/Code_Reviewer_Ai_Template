@@ -29,6 +29,8 @@ namespace CodeReviewerAI.Tests.Integration
 
             service.AddScoped<IGeminiServices, GeminiServices>();
             service.AddScoped<IGithubServices, GithubServices>();
+            service.AddScoped<IPromptService, PromptService>();
+            service.AddScoped<IReviewerService, ReviewerService>();
 
             serviceProvider = service.BuildServiceProvider();
         }
