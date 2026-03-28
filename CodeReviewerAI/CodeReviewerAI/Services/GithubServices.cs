@@ -1,6 +1,8 @@
 ﻿using CodeReviewerAI.Models;
+using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
 using Google.GenAI;
+using Microsoft.Extensions.Options;
 using Octokit;
 
 namespace CodeReviewerAI.Services
@@ -8,13 +10,13 @@ namespace CodeReviewerAI.Services
     public class GithubServices: IGithubServices
     {
         private readonly GitHubClient _client;
-        public string _appName = "CodeReviewerAI";
-        public GithubServices(string token)
+        private readonly GithubOptions _options;
+
+        public GithubServices(IOptions<GithubOptions> options)
         {
-            _client = new GitHubClient(new ProductHeaderValue(_appName));
-            
-            var tokenAuth = new Credentials(token);
-            _client.Credentials = tokenAuth;
+            _options = options.Value;
+            _client = new GitHubClient(new ProductHeaderValue(_options.AppName));
+            _client.Credentials = new Credentials(_options.Token);
         }
 
         public async Task<List<GithubFileChange>> pullRequestDiffs(string owner, string repoName, int prNumber)

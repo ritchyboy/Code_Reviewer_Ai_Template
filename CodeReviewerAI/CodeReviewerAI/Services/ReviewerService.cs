@@ -1,5 +1,8 @@
 ﻿using CodeReviewerAI.Models;
+using CodeReviewerAI.Services.Gemini;
+using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,18 +16,18 @@ namespace CodeReviewerAI.Services
 {
     public class ReviewerService : IReviewerService
     {
-        private IGeminiServices _geminiServices;
-        private IGithubServices _githubServices;
-        private IPromptService _promptService;
+        private readonly IGeminiServices _geminiServices;
+        private readonly IGithubServices _githubServices;
+        private readonly IPromptService _promptService;
 
-        public ReviewerService(IGeminiServices geminiServices,IGithubServices githubServices,
-        IPromptService promptService)
-        {
-            _geminiServices = geminiServices;
-            _githubServices = githubServices;
-            _promptService = promptService;
+         public ReviewerService(IGeminiServices geminiServices,IGithubServices githubServices,
+         IPromptService promptService)
+         {
+             _geminiServices = geminiServices;
+             _githubServices = githubServices;
+             _promptService = promptService;
 
-        }
+         }
         public async Task<ReviewResult> Run(string owner,string reposName,int prNumber)
         {
             var result = await ReviewPullrequestAsync(owner, reposName, prNumber);

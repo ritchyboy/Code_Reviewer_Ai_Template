@@ -1,4 +1,5 @@
 ﻿using CodeReviewerAI.Services;
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace CodeReviewerAI.Tests
         {
             var service = new PromptService();
 
-            Assert.NotNull(service);
+            service.Should().NotBeNull();
         }
 
         [Fact]
@@ -31,9 +32,7 @@ namespace CodeReviewerAI.Tests
             var service = new PromptService();
             string result = await service.promptManagerAsync(clientPathTest, testableCode);
 
-
-            Assert.NotNull(result);
-            Assert.False(string.IsNullOrEmpty(result), "The prompt cannot be build correctly");
+            result.Should().NotBeNullOrEmpty("The prompt cannot be build correctlt");
         }
     }
 }

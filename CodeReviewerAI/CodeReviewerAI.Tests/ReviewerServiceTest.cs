@@ -1,5 +1,9 @@
 ﻿using CodeReviewerAI.Models;
 using CodeReviewerAI.Services;
+using CodeReviewerAI.Services.IServices;
+using CodeReviewerAI.Tests.Integration;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +12,18 @@ using System.Threading.Tasks;
 
 namespace CodeReviewerAI.Tests
 {
-    public class ReviewerServiceTest
+    public class ReviewerServiceTest:BaseIntegrationTest
     {
-        public string GetApiKey()
-        {
-            string key = Environment.GetEnvironmentVariable("GEMINI_API_KEY"
-            ,EnvironmentVariableTarget.User);
 
-            return key;
-        }
-        public string GetToken()
-        {
-            string token = Environment.GetEnvironmentVariable("GIT_TOKEN"
-            , EnvironmentVariableTarget.User);
-
-            return token;
-        }
         [Fact]
         public void can_the_service_be_build()
         {
             // ACT
-            
-           var service = new ReviewerService(new GeminiServices(GetApiKey()),
-           new GithubServices(GetToken()),new PromptService());
+            var geminiService = serviceProvider.GetRequiredService<IGeminiServices>();
+            var githubService = serviceProvider.GetRequiredService<IGithubServices>();
+            var service = new ReviewerService(geminiService,githubService,new PromptService());
 
-           Assert.NotNull(service);
+            service.Should().NotBeNull();
         }
         [Fact]
         public async Task pullrequest_review_result_verification()
@@ -43,13 +34,16 @@ namespace CodeReviewerAI.Tests
             int prNumber = 2;
 
             // Service
-            var ReviewerService = new ReviewerService(new GeminiServices(GetApiKey()),
-            new GithubServices(GetToken()),new PromptService());
+            var geminiService = serviceProvider.GetRequiredService<IGeminiServices>();
+            var githubService = serviceProvider.GetRequiredService<IGithubServices>();
+            var service = new ReviewerService(geminiService, githubService, new PromptService());
 
 
-            ReviewResult result = await ReviewerService.ReviewPullrequestAsync(owner,reposName,prNumber);
 
-            Assert.NotNull(result);
+            ReviewResult result = await service.ReviewPullrequestAsync(owner,reposName,prNumber);
+
+            result.Should().NotBeNull();
+            result.MarkdownReview.Should().NotBeNull();
             Assert.False(string.IsNullOrEmpty(result.MarkdownReview),"Models didn't return a comment");
         }
     }

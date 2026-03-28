@@ -22,8 +22,7 @@ namespace CodeReviewerAI
             builder.Services.Configure<GithubOptions>(builder.Configuration.GetSection("Github"));
 
 
-            ReviewerService reviewer = new ReviewerService(new GeminiServices(GetApiKey()),
-            new GithubServices(GetToken()),new PromptService());
+           // ReviewerService reviewer = new ReviewerService(new GeminiServices(),new GithubServices(),new PromptService());
            /* if (args.Length != 3)
             {
                 Console.Error.WriteLine("Missing argument in application like owner , reposName and prNumber");
@@ -44,7 +43,7 @@ namespace CodeReviewerAI
             int prNumber = 2;
 
 
-            ReviewResult result = await reviewer.ReviewPullrequestAsync(owner, reposName, prNumber);
+           /* ReviewResult result = await reviewer.ReviewPullrequestAsync(owner, reposName, prNumber);
 
             Console.WriteLine(result.MarkdownReview);
             Console.WriteLine("Summary: " + result.Summary);
@@ -52,34 +51,7 @@ namespace CodeReviewerAI
             Console.WriteLine("RiskLevel: " + result.RiskLevel);
             Console.WriteLine("RiskScore: " + result.RiskScore);
             Console.ReadLine();
-
+           */
         }
-        private static string GetApiKey()
-        {
-            var key = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
-
-            if (string.IsNullOrEmpty(key))
-                key = Environment.GetEnvironmentVariable("GEMINI_API_KEY", EnvironmentVariableTarget.User);
-
-            // Helpful error if you forgot to restart Visual Studio
-            if (string.IsNullOrEmpty(key))
-                throw new InvalidOperationException("API Key not found! Did you restart Visual Studio/Terminal after setting 'GEMINI_API_KEY'?");
-
-            return key;
-        }
-        private static string GetToken()
-        {
-            string token = Environment.GetEnvironmentVariable("GIT_TOKEN");
-
-            if(string.IsNullOrEmpty(token))
-                token = Environment.GetEnvironmentVariable("GIT_TOKEN",
-                EnvironmentVariableTarget.User);
-
-            if (string.IsNullOrEmpty(token))
-            throw new InvalidOperationException("Token was not found ! You should try to restart your IDE after setting GITHUB_TOKEN");
-
-            return token;
-        }
-
     }
 }

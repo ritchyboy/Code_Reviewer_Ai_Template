@@ -15,10 +15,6 @@ public class GeminiServices: IGeminiServices
 	private readonly Client _client;
     private readonly GeminiOptions _options;
 
-	public GeminiServices(string key)
-	{
-		_client = new Client(apiKey: key);
-	}
     public GeminiServices(IOptions<GeminiOptions> options)
     {
         _options = options.Value;

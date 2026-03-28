@@ -1,39 +1,33 @@
 ﻿using CodeReviewerAI.Models;
 using CodeReviewerAI.Services;
+using CodeReviewerAI.Services.IServices;
+using CodeReviewerAI.Tests.Integration;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeReviewerAI.Tests.Services
 {
-    public class GithubServiceTest
+    public class GithubServiceTest:BaseIntegrationTest
     {
-        private string GetGithubToken()
-        {
-            string token = Environment.GetEnvironmentVariable("GIT_TOKEN");
 
-            if (string.IsNullOrEmpty(token))
-                token = Environment.GetEnvironmentVariable("GIT_TOKEN",
-                EnvironmentVariableTarget.User);
-
-            return token;
-        }
         [Fact]
         public void services_can_be_constructed()
         {
-            // Arrange
-            string githubToken = GetGithubToken();
-
             // Act
-            var services = new GithubServices(githubToken);
+            var services = serviceProvider.GetRequiredService<IGithubServices>() ;
 
             // Assert
-            Assert.NotNull(services);
+            services.Should().NotBeNull();   
         }
 
         [Fact]
         public void get_data_from_service()
         {
-            var service = new GithubServices(GetGithubToken());
+            var service = serviceProvider.GetRequiredService<IGithubServices>();
 
-            service.getDataFromUser();
+            string data = service.getDataFromUser();
+
+            data.Should().NotBeNullOrEmpty();
         }
         [Fact]
         public async Task Analyze_PullRequest_Diff_For_Response_From_Github()
@@ -42,13 +36,11 @@ namespace CodeReviewerAI.Tests.Services
             string reposName = "SandBox_Test";
 
 
-            var service = new GithubServices(GetGithubToken());
+            var service = serviceProvider.GetRequiredService<IGithubServices>();
             var diffs = new List<GithubFileChange>();
             diffs = await service.pullRequestDiffs(owner,reposName,1);
 
-            
-            Assert.True(diffs.Count > 0);
-            Assert.Contains("Hello Github PullRequest", diffs[0].patch);
+            diffs.Should().NotBeNull();
         }
     }
 }

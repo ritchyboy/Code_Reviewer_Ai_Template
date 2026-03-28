@@ -10,5 +10,7 @@ namespace CodeReviewerAI.Services.IServices
     public interface IGithubServices
     {
         public Task<List<GithubFileChange>> pullRequestDiffs(string owner,string repoName,int prNumber);
+
+        public string getDataFromUser();
     }
 }
