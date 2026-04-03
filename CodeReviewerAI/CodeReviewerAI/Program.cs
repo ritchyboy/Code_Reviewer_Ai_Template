@@ -22,7 +22,7 @@ namespace CodeReviewerAI
 
         static async Task Main(string[] args)
         {
-
+ 
             var builder = new HostApplicationBuilder();
             builder.Configuration.AddJsonFile("appsettings.json", false, true)
             .AddUserSecrets<Program>();
@@ -50,7 +50,7 @@ namespace CodeReviewerAI
                     Console.ReadLine();
                 }
             }
-
+          
                 /* if (args.Length != 3)
                  {
                      Console.Error.WriteLine("Missing argument in application like owner , reposName and prNumber");

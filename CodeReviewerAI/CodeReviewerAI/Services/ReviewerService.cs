@@ -3,6 +3,7 @@ using CodeReviewerAI.Services.Gemini;
 using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -71,6 +72,7 @@ namespace CodeReviewerAI.Services
                     reviewCode += file.fileName + file.patch + "\n";
                 }
                 string fullPrompt = await _promptService.promptManagerAsync(firstFile, reviewCode);
+
 
                 pullrequestComment = await _geminiServices.AnalyzeCodeToReview(fullPrompt);
 

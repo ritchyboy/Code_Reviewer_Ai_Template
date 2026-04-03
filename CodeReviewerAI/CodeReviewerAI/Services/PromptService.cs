@@ -1,4 +1,5 @@
 ﻿using CodeReviewerAI.Services.IServices;
+using Google.Apis.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,15 +69,22 @@ namespace CodeReviewerAI.Services
             string getBasePrompt = await getBasePromptAsync();
             string getLangPrompt = await languageManagerPromptAsync(fileExt);
             string getOutputPrompt = await getOutputSchemaPromptAsync();
-
-
             StringBuilder fullPromptBuilder = new StringBuilder();
-            fullPromptBuilder.AppendLine(getBasePrompt);
-            fullPromptBuilder.AppendLine(getLangPrompt);
-            fullPromptBuilder.AppendLine(getOutputPrompt);
-            fullPromptBuilder.AppendLine(codeSample);
 
+            try
+            {
+                fullPromptBuilder.AppendLine(getBasePrompt);
+                fullPromptBuilder.AppendLine(getLangPrompt);
+                fullPromptBuilder.AppendLine(getOutputPrompt);
+                fullPromptBuilder.AppendLine(codeSample);
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException(fullPromptBuilder.ToString(),nameof(fullPromptBuilder));
+            }
             return fullPromptBuilder.ToString();
+
+
         }
     }
 }
