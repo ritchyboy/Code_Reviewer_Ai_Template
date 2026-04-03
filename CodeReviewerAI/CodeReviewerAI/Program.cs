@@ -21,7 +21,7 @@ namespace CodeReviewerAI
             if (args.Length != 3)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("ERROR: Incorrect number of arguments.");
+                Console.WriteLine("ERROR:Missing argument,Incorrect number of arguments.");
                 Console.ResetColor();
                 Console.WriteLine("Usage: CodeReviewerAI <owner> <repo> <prNumber>");
                 Console.WriteLine("Example: dotnet run -- Alfred Sandbox_Project 5");
