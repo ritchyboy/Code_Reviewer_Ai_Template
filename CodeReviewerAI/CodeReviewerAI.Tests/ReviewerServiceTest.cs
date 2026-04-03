@@ -4,6 +4,7 @@ using CodeReviewerAI.Services.IServices;
 using CodeReviewerAI.Tests.Integration;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace CodeReviewerAI.Tests
             var geminiService = serviceProvider.GetRequiredService<IGeminiServices>();
             var githubService = serviceProvider.GetRequiredService<IGithubServices>();
             var promptService = serviceProvider.GetRequiredService<IPromptService>();
-            var service = new ReviewerService(geminiService,githubService,promptService);
+            var service = new ReviewerService(geminiService, githubService, promptService);
 
             service.Should().NotBeNull();
         }
@@ -38,13 +39,14 @@ namespace CodeReviewerAI.Tests
             var geminiService = serviceProvider.GetRequiredService<IGeminiServices>();
             var githubService = serviceProvider.GetRequiredService<IGithubServices>();
             var promptService = serviceProvider.GetRequiredService<IPromptService>();
-            var service = new ReviewerService(geminiService, githubService,promptService);
+            var service = new ReviewerService(geminiService, githubService, promptService);
 
 
-            ReviewResult result = await service.ReviewPullrequestAsync(owner,reposName,prNumber);
+            ReviewResult result = await service.ReviewPullrequestAsync(owner, reposName, prNumber);
 
             result.Should().NotBeNull();
             result.MarkdownReview.Should().NotBeNullOrEmpty("Models didn't return a comment");
         }
+        
     }
 }

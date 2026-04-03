@@ -6,6 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Moq;
+using System.Runtime.CompilerServices;
+using CodeReviewerAI.Models;
+using FluentAssertions;
 
 namespace CodeReviewerAI.Tests
 {
@@ -34,5 +38,7 @@ namespace CodeReviewerAI.Tests
 
             Assert.Throws<ArgumentException>(() => new GeminiServices(options));
         }
+        
+        
     }
 }

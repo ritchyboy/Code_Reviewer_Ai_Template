@@ -32,7 +32,7 @@ namespace CodeReviewerAI.Tests
             var service = new PromptService();
             string result = await service.promptManagerAsync(clientPathTest, testableCode);
 
-            result.Should().NotBeNullOrEmpty("The prompt cannot be build correctlt");
+            result.Should().NotBeNullOrEmpty("The prompt cannot be build correctly");
         }
     }
 }
