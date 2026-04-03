@@ -16,13 +16,30 @@ namespace CodeReviewerAI
 {
     internal class Program
     {
-        public static string owner = "ritchyboy";
-        public static string reposName = "SandBox_Test";
-        public static int prNumber = 2;
-
         static async Task Main(string[] args)
         {
- 
+            if (args.Length != 3)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("ERROR: Incorrect number of arguments.");
+                Console.ResetColor();
+                Console.WriteLine("Usage: CodeReviewerAI <owner> <repo> <prNumber>");
+                Console.WriteLine("Example: dotnet run -- Alfred Sandbox_Project 5");
+                Environment.Exit(1);
+            }
+            if (!int.TryParse(args[2], out int prNumberOutput))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("ERROR: prNumber is not a valid integer");
+                Console.ResetColor();
+                Environment.Exit(1);
+            }
+            // Owner = Ritchyboy reposName = SandBox_Test prNumber = 1 or 2 //
+            string owner = args[0];
+            string reposName = args[1];
+            int prNumber = prNumberOutput;
+
+
             var builder = new HostApplicationBuilder();
             builder.Configuration.AddJsonFile("appsettings.json", false, true)
             .AddUserSecrets<Program>();
@@ -50,22 +67,6 @@ namespace CodeReviewerAI
                     Console.ReadLine();
                 }
             }
-          
-                /* if (args.Length != 3)
-                 {
-                     Console.Error.WriteLine("Missing argument in application like owner , reposName and prNumber");
-                     Environment.Exit(1);
-                 }
-                     if (!int.TryParse(args[2],out int prNumberOutput))
-                     {
-                         Console.Error.WriteLine("prNumber is not a valid integer");
-                         Environment.Exit(1);
-                     }
-
-                         string owner = args[0];
-                         string reposName = args[1];
-                         int prNumber = prNumberOutput;
-                */
         }
     }
 }

@@ -16,3 +16,9 @@ appsettings.json
 
 ## Ignore Test Results (but KEEP the test code!)
 TestResults/
+
+# Python Automation
+Automation/venv/
+Automation/.pytest_cache/
+Automation/__pycache__/
+Automation/tests/__pycache__/
