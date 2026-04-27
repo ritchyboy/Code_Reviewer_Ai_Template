@@ -8,9 +8,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Options;
+using Polly.Retry;
 using Octokit;
+using Polly;
 using System.Runtime.CompilerServices;
 using static System.Net.Mime.MediaTypeNames;
+using Google;
+using Polly.Registry;
 
 namespace CodeReviewerAI
 {
@@ -44,10 +48,30 @@ namespace CodeReviewerAI
             builder.Configuration.AddJsonFile("appsettings.json", false, true)
             .AddUserSecrets<Program>();
 
+            builder.Services.AddResiliencePipeline("Default", x =>
+            {
+                x.AddRetry(new RetryStrategyOptions
+                {
+                    ShouldHandle = new PredicateBuilder().Handle<GoogleApiException>(),
+                    Delay = TimeSpan.FromSeconds(4),
+                    MaxRetryAttempts = 3,
+                    BackoffType = DelayBackoffType.Exponential,
+                    UseJitter = true
+                });
+            });
+
             builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
             builder.Services.Configure<GithubOptions>(builder.Configuration.GetSection("Github"));
 
-            builder.Services.AddScoped<IGeminiServices, GeminiServices>();
+            builder.Services.AddScoped<GeminiServices>();
+            builder.Services.AddScoped<IGeminiServices>(ServiceProvider =>
+            {
+                var coreService = ServiceProvider.GetRequiredService<GeminiServices>();
+
+                var pipelineProvider = ServiceProvider.GetRequiredService<ResiliencePipelineProvider<string>>();
+
+                return new ResilientGeminiServices(coreService, pipelineProvider);
+            });
             builder.Services.AddScoped<IGithubServices, GithubServices>();
             builder.Services.AddScoped<IPromptService, PromptService>();
             builder.Services.AddScoped<IReviewerService, ReviewerService>();

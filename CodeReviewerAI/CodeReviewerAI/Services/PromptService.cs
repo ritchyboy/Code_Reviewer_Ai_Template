@@ -66,22 +66,24 @@ namespace CodeReviewerAI.Services
 
         public async Task<string> promptManagerAsync(string fileExt,string codeSample)
         {
-            string getBasePrompt = await getBasePromptAsync();
-            string getLangPrompt = await languageManagerPromptAsync(fileExt);
-            string getOutputPrompt = await getOutputSchemaPromptAsync();
-            StringBuilder fullPromptBuilder = new StringBuilder();
+         
+            ArgumentException.ThrowIfNullOrWhiteSpace(codeSample, nameof(codeSample));
+            
+            var getBasePromptTask = getBasePromptAsync();
+            var getLangPromptTask =  languageManagerPromptAsync(fileExt);
+            var getOutputPromptTask = getOutputSchemaPromptAsync();
 
-            try
-            {
-                fullPromptBuilder.AppendLine(getBasePrompt);
-                fullPromptBuilder.AppendLine(getLangPrompt);
-                fullPromptBuilder.AppendLine(getOutputPrompt);
-                fullPromptBuilder.AppendLine(codeSample);
-            }
-            catch (ArgumentNullException)
-            {
-                throw new ArgumentNullException(fullPromptBuilder.ToString(),nameof(fullPromptBuilder));
-            }
+
+            await Task.WhenAll(getBasePromptTask, getLangPromptTask, getOutputPromptTask);
+
+            int estimatedSize = 1200 + codeSample.Length;
+            StringBuilder fullPromptBuilder = new StringBuilder(estimatedSize);
+       
+            fullPromptBuilder.AppendLine(getBasePromptTask.Result);
+            fullPromptBuilder.AppendLine(getLangPromptTask.Result);
+            fullPromptBuilder.AppendLine(getOutputPromptTask.Result);
+            fullPromptBuilder.AppendLine(codeSample);
+            
             return fullPromptBuilder.ToString();
 
 
