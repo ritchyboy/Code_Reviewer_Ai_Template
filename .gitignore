@@ -1,4 +1,4 @@
-# Visual Studio Files Ignored
 .vs/
-# Configuration File Ignored
 **/appsettings.json
+**/obj
+**/bin
