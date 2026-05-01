@@ -4,6 +4,7 @@ using CodeReviewerAI.Services.IServices;
 using Google.GenAI;
 using Microsoft.Extensions.Options;
 using Octokit;
+using System.Text;
 
 namespace CodeReviewerAI.Services
 {
@@ -47,16 +48,25 @@ namespace CodeReviewerAI.Services
 
             return diffs;
         }
+        public async Task createReviewCommentAsync(string owner, string repoName, int prNumber,ReviewResult pullRequestComment)
+        {
+            StringBuilder commentBuilder = new StringBuilder();
+            commentBuilder.AppendLine($"# CodeReviewerAI Report");
+            commentBuilder.AppendLine($"**Status:** {(pullRequestComment.IsApproved ? "Approved" : "Changes Requested")}");
+            commentBuilder.AppendLine($"**Risk Level:** {pullRequestComment.RiskLevel} ({pullRequestComment.RiskScore}/10)");
+            commentBuilder.AppendLine("-----------------------------------------------");
+            commentBuilder.AppendLine("--Summary--");
+            commentBuilder.AppendLine(pullRequestComment.Summary);
+            commentBuilder.AppendLine("--Detailed Review--");
+            commentBuilder.AppendLine(pullRequestComment.MarkdownReview);
+            await _client.Issue.Comment.Create(owner, repoName, prNumber,commentBuilder.ToString());
+        }
         private bool IsBinary(string filename)
         {
             string[] binaryExtensions = { ".png", ".jpg", ".jpeg", ".dll", ".exe", ".pdb" };
             return binaryExtensions.Any(ext => filename.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
         }
-        public string getDataFromUser()
-        {
-            var user = _client.User.Get("ritchyboy");
-            return user.Result.OwnedPrivateRepos.ToString();
-        }
+
         public string getApiInfo()
         {
             var apiInfo = _client.GetLastApiInfo();

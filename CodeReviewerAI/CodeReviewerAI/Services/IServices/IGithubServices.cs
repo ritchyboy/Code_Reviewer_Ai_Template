@@ -1,4 +1,5 @@
 ﻿using CodeReviewerAI.Models;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,6 @@ namespace CodeReviewerAI.Services.IServices
     public interface IGithubServices
     {
         public Task<List<GithubFileChange>> pullRequestDiffs(string owner,string repoName,int prNumber);
-
-        public string getDataFromUser();
+        public Task createReviewCommentAsync(string owner, string repoName, int prNumber,ReviewResult pullRequestComment);
     }
 }

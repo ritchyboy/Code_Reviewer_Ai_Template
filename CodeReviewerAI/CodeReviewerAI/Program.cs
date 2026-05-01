@@ -81,7 +81,10 @@ namespace CodeReviewerAI
                 {
                     IServiceProvider serviceProvider = serviceScope.ServiceProvider;
                     var service = serviceProvider.GetRequiredService<IReviewerService>();
+                    var githubService = serviceProvider.GetRequiredService<IGithubServices>();
+
                     var result = await service.ReviewPullrequestAsync(owner,reposName,prNumber);
+                    await githubService.createReviewCommentAsync(owner, reposName,prNumber,result);
 
                     Console.WriteLine(result.MarkdownReview);
                     Console.WriteLine("Summary: " + result.Summary);

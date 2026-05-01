@@ -35,6 +35,7 @@ namespace CodeReviewerAI.Services
         }
         public async Task<ReviewResult> ReviewPullrequestAsync(string owner,string reposName,int prNumber)
         {
+            StringBuilder listOfRequest = new StringBuilder();
             ReviewResult pullrequestComment = new ReviewResult();
             string reviewCode = string.Empty;
 
@@ -57,10 +58,18 @@ namespace CodeReviewerAI.Services
                 
                 foreach (var groupe in groupedByExtension)
                 {
-                    StringBuilder groupOfFile = new StringBuilder();
+                    StringBuilder fileGroup = new StringBuilder();
                     List<GithubFileChange> fileChange = groupe.Files.ToList();
-                    
+                    foreach(var file in fileChange)
+                    {
+                        fileGroup.Append(file.fileName);
+                        fileGroup.AppendLine(file.patch);
+                    }
+                    string fullRequest = await _promptService.promptManagerAsync(groupe.Ext, fileGroup.ToString());
+                    fileGroup.Clear();
+                    listOfRequest.AppendLine(fullRequest);
                 }
+                pullrequestComment = await _geminiServices.AnalyzeCodeToReview(listOfRequest.ToString());
                 return pullrequestComment;
             }
             else
