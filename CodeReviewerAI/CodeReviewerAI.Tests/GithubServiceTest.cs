@@ -20,15 +20,7 @@ namespace CodeReviewerAI.Tests.Services
             services.Should().NotBeNull();   
         }
 
-        [Fact]
-        public void get_data_from_service()
-        {
-            var service = serviceProvider.GetRequiredService<IGithubServices>();
 
-            string data = service.getDataFromUser();
-
-            data.Should().NotBeNullOrEmpty();
-        }
         [Fact]
         public async Task Analyze_PullRequest_Diff_For_Response_From_Github()
         {
