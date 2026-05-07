@@ -17,7 +17,7 @@ namespace CodeReviewerAI.Tests.Services
             var services = serviceProvider.GetRequiredService<IGithubServices>() ;
 
             // Assert
-            services.Should().NotBeNull();   
+            services.Should().NotBeNull();
         }
 
 
