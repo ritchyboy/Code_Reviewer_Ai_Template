@@ -1,17 +1,8 @@
 ﻿using CodeReviewerAI.Models;
-using CodeReviewerAI.Services.Gemini;
-using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
-using Microsoft.Extensions.Options;
-using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace CodeReviewerAI.Services
 {

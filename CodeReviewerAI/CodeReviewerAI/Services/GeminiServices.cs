@@ -2,18 +2,11 @@
 using CodeReviewerAI.Models;
 using CodeReviewerAI.Services.Gemini;
 using CodeReviewerAI.Services.IServices;
-using Google.Apis.Util;
 using Google.GenAI;
-using Google.GenAI.Types;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Resilience;
 using Octokit;
-using Polly;
-using Polly.Registry;
-using System;
 using System.Text.Json;
 using System.Threading.RateLimiting;
-using System.Threading.Tasks;
 
 
 public class GeminiServices : IGeminiServices

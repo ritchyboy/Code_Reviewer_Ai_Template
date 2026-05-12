@@ -1,7 +1,6 @@
 ﻿using CodeReviewerAI.Models;
 using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
-using Google.GenAI;
 using Microsoft.Extensions.Options;
 using Octokit;
 using System.Text;

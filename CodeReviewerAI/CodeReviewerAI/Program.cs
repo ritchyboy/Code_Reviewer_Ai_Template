@@ -3,18 +3,16 @@ using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.Gemini;
 using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
+using CodeReviewerAI.Services.IStrategy;
+using CodeReviewerAI.Services.Strategy;
+using Google;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.Options;
-using Polly.Retry;
-using Octokit;
 using Polly;
-using System.Runtime.CompilerServices;
-using static System.Net.Mime.MediaTypeNames;
-using Google;
 using Polly.Registry;
+using Polly.Retry;
+using System;
 
 namespace CodeReviewerAI
 {
@@ -63,6 +61,12 @@ namespace CodeReviewerAI
             builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
             builder.Services.Configure<GithubOptions>(builder.Configuration.GetSection("Github"));
 
+            builder.Services.Scan(scan => scan.FromAssemblyOf<ILanguageStrategy>()
+            .AddClasses(classes => classes.AssignableTo<ILanguageStrategy>()).AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+            builder.Services.AddScoped<LanguageStrategy>();
+
             builder.Services.AddScoped<GeminiServices>();
             builder.Services.AddScoped<IGeminiServices>(ServiceProvider =>
             {
@@ -75,6 +79,7 @@ namespace CodeReviewerAI
             builder.Services.AddScoped<IGithubServices, GithubServices>();
             builder.Services.AddScoped<IPromptService, PromptService>();
             builder.Services.AddScoped<IReviewerService, ReviewerService>();
+
             using (IHost host = builder.Build())
             {
                 using (IServiceScope serviceScope = host.Services.CreateScope())
@@ -82,6 +87,7 @@ namespace CodeReviewerAI
                     IServiceProvider serviceProvider = serviceScope.ServiceProvider;
                     var service = serviceProvider.GetRequiredService<IReviewerService>();
                     var githubService = serviceProvider.GetRequiredService<IGithubServices>();
+
 
                     var result = await service.ReviewPullrequestAsync(owner,reposName,prNumber);
                     await githubService.createReviewCommentAsync(owner, reposName,prNumber,result);

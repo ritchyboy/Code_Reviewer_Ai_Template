@@ -1,15 +1,7 @@
 ﻿using CodeReviewerAI.Models;
 using CodeReviewerAI.Services.IServices;
-using Google.GenAI;
-using Polly;
 using Polly.Registry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+
 
 namespace CodeReviewerAI.Services
 {

@@ -1,12 +1,5 @@
 ﻿using CodeReviewerAI.Services.IServices;
-using Google.Apis.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeReviewerAI.Services
 {
