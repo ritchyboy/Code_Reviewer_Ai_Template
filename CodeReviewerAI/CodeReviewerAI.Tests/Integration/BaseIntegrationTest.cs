@@ -2,6 +2,8 @@
 using CodeReviewerAI.Services.Gemini;
 using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
+using CodeReviewerAI.Services.IStrategy;
+using CodeReviewerAI.Services.Strategy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -27,8 +29,15 @@ namespace CodeReviewerAI.Tests.Integration
             service.Configure<GeminiOptions>(configuration.GetSection("Gemini"));
             service.Configure<GithubOptions>(configuration.GetSection("Github"));
 
+            service.Scan(scan => scan.FromAssemblyOf<ILanguageStrategy>()
+            .AddClasses(classes => classes.AssignableTo<ILanguageStrategy>()).AsImplementedInterfaces()
+            .WithScopedLifetime());
+
+            service.AddScoped<LanguageStrategyProvider>();
+
             service.AddScoped<IGeminiServices, GeminiServices>();
             service.AddScoped<IGithubServices, GithubServices>();
+            service.AddScoped<IStrategyLanguage, LanguageStrategyProvider>();
             service.AddScoped<IPromptService, PromptService>();
             service.AddScoped<IReviewerService, ReviewerService>();
 

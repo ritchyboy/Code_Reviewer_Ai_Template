@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
+using CodeReviewerAI.Services.IStrategy;
 
 namespace CodeReviewerAI.Test.Services
 {
@@ -40,7 +41,10 @@ namespace CodeReviewerAI.Test.Services
 
             string testableCode = await File.ReadAllTextAsync(clientPathTest);
 
-            var promptService = new PromptService();
+            var strategyProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var promptService = new PromptService(strategyProvider);
+
+
             string request = await promptService.promptManagerAsync(clientPathTest,testableCode);
 
             // Act
@@ -62,9 +66,7 @@ namespace CodeReviewerAI.Test.Services
             var result = await service.AnalyzeCodeToReview(fakeDiff);
 
           
-            result.Should().NotBeNull();
-            
-            
+            result.Should().NotBeNull();   
         }
     }
 }

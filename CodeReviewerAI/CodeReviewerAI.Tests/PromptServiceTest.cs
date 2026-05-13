@@ -1,19 +1,19 @@
 ﻿using CodeReviewerAI.Services;
+using CodeReviewerAI.Services.IStrategy;
+using CodeReviewerAI.Tests.Integration;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeReviewerAI.Tests
 {
-    public class PromptServiceTest
+    public class PromptServiceTest : BaseIntegrationTest
     {
         [Fact]
         public void can_be_constructed()
         {
-            var service = new PromptService();
+            var strategyProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+
+            var service = new PromptService(strategyProvider);
 
             service.Should().NotBeNull();
         }
@@ -29,7 +29,10 @@ namespace CodeReviewerAI.Tests
             }
 
             string testableCode = await File.ReadAllTextAsync(clientPathTest);
-            var service = new PromptService();
+
+            var strategyProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var service = new PromptService(strategyProvider);
+
             string result = await service.promptManagerAsync(clientPathTest, testableCode);
 
             result.Should().NotBeNullOrEmpty("The prompt cannot be build correctly");
