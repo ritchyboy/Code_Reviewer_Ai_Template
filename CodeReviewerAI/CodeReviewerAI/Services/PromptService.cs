@@ -46,26 +46,6 @@ namespace CodeReviewerAI.Services
             string result = await _strategyLanguage.LanguageStrategyImplementation(ext);
 
             return result;
-          /*  string languagePrompt = string.Empty;
-            string csharp_Lang_Path = Path.Combine(baseApplicationPath,"Config","Lang_CSharp.txt");
-            string cpp_Lang_Path = Path.Combine(baseApplicationPath,"Config","Lang_CPP.txt");
-
-            if(!File.Exists(csharp_Lang_Path)||!File.Exists(cpp_Lang_Path))
-            {
-                throw new FileNotFoundException("Language file was not found in the Config folder");
-            }
-
-            if (fileExt.ToLower().EndsWith(".cs"))
-            {
-                languagePrompt = await File.ReadAllTextAsync(csharp_Lang_Path);
-            }
-            else
-            {
-                languagePrompt = await File.ReadAllTextAsync(cpp_Lang_Path);
-            }
-
-            return languagePrompt;
-          */
         }
 
         public async Task<string> promptManagerAsync(string fileExt,string codeSample)
