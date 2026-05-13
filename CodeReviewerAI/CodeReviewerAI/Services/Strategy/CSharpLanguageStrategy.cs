@@ -7,22 +7,9 @@ using System.Threading.Tasks;
 
 namespace CodeReviewerAI.Services.Strategy
 {
-    public class CSharpLanguageStrategy : ILanguageStrategy
+    public class CSharpLanguageStrategy : FileBasedLanguageStrategy
     {
-        string[] ILanguageStrategy.language => [".cs"];
-        string basePath = AppDomain.CurrentDomain.BaseDirectory;
-
-
-        public async Task<string> languagePromptSelection()
-        {
-            string path = Path.Combine(basePath, "Config", "Lang_CSharp.txt");
-            if (!File.Exists(path))
-            {
-                throw new FileNotFoundException();
-            }
-            string languagePrompt = await File.ReadAllTextAsync(path);
-
-            return languagePrompt;
-        }
+        public override string[] SupportedExtensions => [".cs"];
+        protected override string ConfigFileName => "Lang_CSharp.txt";
     }
 }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace CodeReviewerAI.Services.IStrategy
 {
-    public interface ILanguageStrategy
+    public interface IStrategyLanguage
     {
-        bool IsExtensionSupported(string extension);
-        public Task<string> LanguagePromptSelection();
+        public Task<string> LanguageStrategyImplementation(string extension);
     }
 }

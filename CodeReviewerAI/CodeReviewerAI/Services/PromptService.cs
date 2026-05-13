@@ -1,12 +1,18 @@
 ﻿using CodeReviewerAI.Services.IServices;
+using CodeReviewerAI.Services.IStrategy;
 using System.Text;
 
 namespace CodeReviewerAI.Services
 {
     public class PromptService: IPromptService
     {
+        private readonly IStrategyLanguage _strategyLanguage;
         private readonly string baseApplicationPath = AppDomain.CurrentDomain.BaseDirectory;
 
+        public PromptService(IStrategyLanguage strategyLanguage)
+        {
+            _strategyLanguage = strategyLanguage;
+        }
         public async Task<string> getBasePromptAsync()
         {
             string basePrompt = string.Empty;
@@ -36,7 +42,11 @@ namespace CodeReviewerAI.Services
         }
         public async Task<string> languageManagerPromptAsync(string fileExt)
         {
-            string languagePrompt = string.Empty;
+            string ext = Path.GetExtension(fileExt);
+            string result = await _strategyLanguage.LanguageStrategyImplementation(ext);
+
+            return result;
+          /*  string languagePrompt = string.Empty;
             string csharp_Lang_Path = Path.Combine(baseApplicationPath,"Config","Lang_CSharp.txt");
             string cpp_Lang_Path = Path.Combine(baseApplicationPath,"Config","Lang_CPP.txt");
 
@@ -55,6 +65,7 @@ namespace CodeReviewerAI.Services
             }
 
             return languagePrompt;
+          */
         }
 
         public async Task<string> promptManagerAsync(string fileExt,string codeSample)

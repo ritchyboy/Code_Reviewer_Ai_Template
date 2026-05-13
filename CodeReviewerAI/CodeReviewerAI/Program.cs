@@ -65,7 +65,7 @@ namespace CodeReviewerAI
             .AddClasses(classes => classes.AssignableTo<ILanguageStrategy>()).AsImplementedInterfaces()
             .WithScopedLifetime());
 
-            builder.Services.AddScoped<LanguageStrategy>();
+            builder.Services.AddScoped<LanguageStrategyProvider>();
 
             builder.Services.AddScoped<GeminiServices>();
             builder.Services.AddScoped<IGeminiServices>(ServiceProvider =>
@@ -77,6 +77,7 @@ namespace CodeReviewerAI
                 return new ResilientGeminiServices(coreService, pipelineProvider);
             });
             builder.Services.AddScoped<IGithubServices, GithubServices>();
+            builder.Services.AddScoped<IStrategyLanguage,LanguageStrategyProvider>();
             builder.Services.AddScoped<IPromptService, PromptService>();
             builder.Services.AddScoped<IReviewerService, ReviewerService>();
 

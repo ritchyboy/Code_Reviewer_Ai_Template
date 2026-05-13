@@ -1,4 +1,5 @@
 ﻿using CodeReviewerAI.Services.IStrategy;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,22 +8,9 @@ using System.Threading.Tasks;
 
 namespace CodeReviewerAI.Services.Strategy
 {
-    public class CppLanguageStrategy : ILanguageStrategy
+    public class CppLanguageStrategy : FileBasedLanguageStrategy
     {
-        string[] ILanguageStrategy.language => [".cpp",".h",".hpp"];
-        string basePath = AppDomain.CurrentDomain.BaseDirectory;
-
-
-        public async Task<string> languagePromptSelection()
-        {
-            string path = Path.Combine(basePath, "Config", "Lang_CPP.txt");
-            if (!File.Exists(path))
-            {
-                throw new FileNotFoundException();
-            }
-            string languagePrompt = await File.ReadAllTextAsync(path);
-
-            return languagePrompt;
-        }
+        public override string[] SupportedExtensions => [".cpp", ".h", ".hpp"];
+        protected override string ConfigFileName => "Lang_CPP.txt";
     }
 }

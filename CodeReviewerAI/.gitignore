@@ -8,7 +8,10 @@ obj/
 *.user
 *.suo
 *.userprefs
+.git
 .github/copilot-instructions.md
+CodeReviewerAI.csproj.Backup.tmp
+*/Properties/
 
 ## Ignore environment variables and secrets (Safety First!)
 .env
