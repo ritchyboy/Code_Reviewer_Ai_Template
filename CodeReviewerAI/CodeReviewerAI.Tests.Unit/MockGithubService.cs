@@ -1,15 +1,9 @@
 ﻿using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.Github;
 using FluentAssertions;
-using Google.Apis.Util;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CodeReviewerAI.Tests
+namespace CodeReviewerAI.Tests.Unit
 {
     public class MockGithubService
     {

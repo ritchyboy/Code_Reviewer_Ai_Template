@@ -1,11 +1,9 @@
 ﻿using CodeReviewerAI.Models;
-using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.IServices;
-using CodeReviewerAI.Tests.Integration;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CodeReviewerAI.Tests.Services
+namespace CodeReviewerAI.Tests.Integration
 {
     public class GithubServiceTest : BaseIntegrationTest
     {

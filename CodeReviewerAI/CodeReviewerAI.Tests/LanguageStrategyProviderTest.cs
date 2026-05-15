@@ -1,18 +1,8 @@
-﻿using CodeReviewerAI.Services;
-using CodeReviewerAI.Services.IStrategy;
-using CodeReviewerAI.Services.Strategy;
-using CodeReviewerAI.Tests.Integration;
+﻿using CodeReviewerAI.Services.IStrategy;
 using FluentAssertions;
-using Google.Apis.Util;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace CodeReviewerAI.Tests
+namespace CodeReviewerAI.Tests.Integration
 {
     public class LanguageStrategyProviderTest : BaseIntegrationTest
     {

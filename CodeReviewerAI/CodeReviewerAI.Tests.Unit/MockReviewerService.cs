@@ -2,15 +2,10 @@
 using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.IServices;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
-using Google.Apis.Util;
 
-namespace CodeReviewerAI.Tests
+
+namespace CodeReviewerAI.Tests.Unit
 {
     public class MockReviewerService
     {

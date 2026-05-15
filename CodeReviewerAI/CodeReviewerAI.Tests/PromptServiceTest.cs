@@ -1,10 +1,9 @@
 ﻿using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.IStrategy;
-using CodeReviewerAI.Tests.Integration;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CodeReviewerAI.Tests
+namespace CodeReviewerAI.Tests.Integration
 {
     public class PromptServiceTest : BaseIntegrationTest
     {

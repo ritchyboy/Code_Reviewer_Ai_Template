@@ -1,17 +1,7 @@
 ﻿using CodeReviewerAI.Services.Gemini;
-using CodeReviewerAI.Services.IServices;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using System.Runtime.CompilerServices;
-using CodeReviewerAI.Models;
-using FluentAssertions;
 
-namespace CodeReviewerAI.Tests
+namespace CodeReviewerAI.Tests.Unit
 {
     public class MockGeminiService
     {

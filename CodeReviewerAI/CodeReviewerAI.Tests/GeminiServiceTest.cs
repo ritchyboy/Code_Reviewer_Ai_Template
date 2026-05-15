@@ -1,17 +1,10 @@
-﻿using CodeReviewerAI.Models;
-using CodeReviewerAI.Services;
+﻿using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.IServices;
-using CodeReviewerAI.Test.Services; // Ensure this matches your namespace
-using CodeReviewerAI.Tests.Integration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Xunit;
 using FluentAssertions;
 using CodeReviewerAI.Services.IStrategy;
 
-namespace CodeReviewerAI.Test.Services
+namespace CodeReviewerAI.Tests.Integration
 {
     public class GeminiServiceTests : BaseIntegrationTest
     {
