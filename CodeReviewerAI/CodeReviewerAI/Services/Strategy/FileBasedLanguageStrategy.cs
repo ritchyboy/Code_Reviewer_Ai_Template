@@ -9,13 +9,15 @@ namespace CodeReviewerAI.Services.Strategy
 {
     public abstract class FileBasedLanguageStrategy : ILanguageStrategy
     {
-            protected abstract string ConfigFileName { get; }
-            public abstract string[] SupportedExtensions { get; }
+        protected abstract string ConfigFileName { get; }
+        public abstract string[] SupportedExtensions { get; }
 
         public async Task<string> LanguagePromptSelection()
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config",ConfigFileName);
-            if (!File.Exists(path)) throw new FileNotFoundException(path);
+
+            if (!File.Exists(path))
+            throw new FileNotFoundException(path);
 
             return await File.ReadAllTextAsync(path);
         }
