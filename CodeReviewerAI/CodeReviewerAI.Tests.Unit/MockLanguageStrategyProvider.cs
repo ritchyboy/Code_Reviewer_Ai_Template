@@ -1,42 +1,54 @@
 ﻿using CodeReviewerAI.Services.IStrategy;
 using CodeReviewerAI.Services.Strategy;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.Extensions.AI;
-using Microsoft.Identity.Client;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit.Sdk;
+
 
 namespace CodeReviewerAI.Tests.Unit
 {
+    public class MockLanguage : FileBasedLanguageStrategy
+    {
+        public override string[] SupportedExtensions => [".cs"];
+
+        protected override string ConfigFileName => "Lang_CSharp.txt";
+    }
+    public class MockLanguageFakeFile : FileBasedLanguageStrategy
+    {
+        public override string[] SupportedExtensions => [".cs"];
+
+        protected override string ConfigFileName => "Lang_File.txt";
+    }
     public class MockLanguageStrategyProvider
     {
         [Fact]
-        public void initiate_language_strategy_provider()
+        public async Task initiate_language_strategy_provider()
         {
-            var mockListStrategy = new List<ILanguageStrategy>() { new CSharpLanguageStrategy(),new CppLanguageStrategy()};
+            var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage()};
             var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
-            var result = languageStrategy.LanguageStrategyImplementation(".cs");
+            var result = await languageStrategy.LanguageStrategyImplementation(".cs");
 
-            languageStrategy.Should().NotBeNull();
+            result.Should().NotBeNullOrEmpty();
+        }
+        [Fact]
+        public async Task return_file_not_found_error()
+        {
+            var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguageFakeFile() };
+            var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
+            Func<Task> result = () => languageStrategy.LanguageStrategyImplementation(".cs");
+
+            await result.Should().ThrowAsync<FileNotFoundException>();
+
         }
 
         [Fact]
-        public void should_return_not_supported_error()
+        public async Task should_return_not_supported_error()
         {
-            var mockListStrategy = new List<ILanguageStrategy>() { new CSharpLanguageStrategy(),
-            new CppLanguageStrategy()};
+            var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage()};
 
             var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
 
 
             Func<Task> result = async () => await languageStrategy.LanguageStrategyImplementation(".py");
-            result.Should().ThrowAsync<NotSupportedException>();
+            await result.Should().ThrowAsync<NotSupportedException>();
         }
 
     }
