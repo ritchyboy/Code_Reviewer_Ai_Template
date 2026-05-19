@@ -22,7 +22,7 @@ jobs:
 
       - name: Restore and Build
         run: |
-          dotnet restore
+          dotnet restore CodeReviewerAI.sln
           dotnet build --configuration Release --no-restore
 
       - name: Run Unit Tests
