@@ -36,15 +36,14 @@ namespace CodeReviewerAI
                 Console.ResetColor();
                 Environment.Exit(1);
             }
-            // Owner = Ritchyboy reposName = SandBox_Test prNumber = 1 or 2 //
             string owner = args[0];
             string reposName = args[1];
             int prNumber = prNumberOutput;
 
 
             var builder = new HostApplicationBuilder();
-            builder.Configuration.AddJsonFile("appsettings.json", false, true)
-            .AddUserSecrets<Program>();
+            builder.Configuration.AddJsonFile("appsettings.json", true, true)
+            .AddUserSecrets<Program>(optional:true);
 
             builder.Services.AddResiliencePipeline("Default", x =>
             {
@@ -92,13 +91,6 @@ namespace CodeReviewerAI
 
                     var result = await service.ReviewPullrequestAsync(owner,reposName,prNumber);
                     await githubService.createReviewCommentAsync(owner, reposName,prNumber,result);
-
-                    Console.WriteLine(result.MarkdownReview);
-                    Console.WriteLine("Summary: " + result.Summary);
-                    Console.WriteLine("IsApproved: " + result.IsApproved);
-                    Console.WriteLine("RiskLevel: " + result.RiskLevel);
-                    Console.WriteLine("RiskScore: " + result.RiskScore);
-                    Console.ReadLine();
                 }
             }
         }
