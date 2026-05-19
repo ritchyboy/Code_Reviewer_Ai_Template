@@ -16,8 +16,7 @@ CodeReviewerAI.csproj.Backup.tmp
 ## Ignore environment variables and secrets (Safety First!)
 .env
 .DS_Store
-appsettings.json
-**/appsettings.json
+
 
 ## Ignore Test Results (but KEEP the test code!)
 TestResults/
