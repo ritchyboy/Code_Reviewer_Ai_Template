@@ -7,7 +7,6 @@ namespace CodeReviewerAI.Services
     public class PromptService: IPromptService
     {
         private readonly IStrategyLanguage _strategyLanguage;
-        private readonly IPromptService _promptService;
         private readonly string baseApplicationPath = AppDomain.CurrentDomain.BaseDirectory;
 
         public PromptService(IStrategyLanguage strategyLanguage)
@@ -53,9 +52,9 @@ namespace CodeReviewerAI.Services
         {
          
             ArgumentException.ThrowIfNullOrWhiteSpace(codeSample, nameof(codeSample));
-            Task<string> getBasePromptTask = _promptService.GetBasePromptAsync();
-            Task<string> getLangPromptTask = _promptService.GetLanguagePromptAsync(fileExt);
-            Task<string> getOutputPromptTask = _promptService.GetOutputSchemaPromptAsync();
+            Task<string> getBasePromptTask = GetBasePromptAsync();
+            Task<string> getLangPromptTask = GetLanguagePromptAsync(fileExt);
+            Task<string> getOutputPromptTask = GetOutputSchemaPromptAsync();
 
 
             await Task.WhenAll(getBasePromptTask, getLangPromptTask, getOutputPromptTask);
