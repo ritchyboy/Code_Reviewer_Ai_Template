@@ -44,3 +44,7 @@ jobs:
         env:
           Gemini__ApiKey: ${{ secrets.GEMINI_API_KEY }}
           GitHub__Token: ${{ secrets.GITHUB_TOKEN }}
+          Gemini__Model: "gemini-3-flash-preview"
+          Gemini__Provider: "Google"
+          Gemini__Temperature: "1.0"
+          GitHub__AppName: "CodeReviewerAI"
