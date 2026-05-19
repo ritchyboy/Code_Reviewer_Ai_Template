@@ -63,7 +63,7 @@ namespace CodeReviewerAI.Services
         private bool IsBinary(string filename)
         {
             string[] binaryExtensions = { ".png", ".jpg", ".jpeg", ".dll", ".exe", ".pdb",".yml",".gitignore"
-            ,".md",".sln",".csproj"};
+            ,".md",".sln",".csproj",".txt"};
             return binaryExtensions.Any(ext => filename.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
         }
 
