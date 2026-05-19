@@ -9,5 +9,6 @@ namespace CodeReviewerAI.Services.IStrategy
     public interface IStrategyLanguage
     {
         public Task<string> LanguageStrategyImplementation(string extension);
+        bool HasStrategy(string extension);
     }
 }

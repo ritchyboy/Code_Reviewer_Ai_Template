@@ -16,6 +16,10 @@ namespace CodeReviewerAI.Services.Strategy
         {
             _strategies = strategies;
         }
+        public bool HasStrategy(string extension)
+        {
+            return _strategies.Any(x => x.IsExtensionSupported(extension));
+        }
         public async Task<string> LanguageStrategyImplementation(string extension)
         {
             var strategy = _strategies.FirstOrDefault(x => x.IsExtensionSupported(extension));

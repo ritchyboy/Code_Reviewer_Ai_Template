@@ -91,6 +91,7 @@ namespace CodeReviewerAI
 
                     var result = await service.ReviewPullrequestAsync(owner,reposName,prNumber);
                     await githubService.createReviewCommentAsync(owner, reposName,prNumber,result);
+                    Console.WriteLine(result.MarkdownReview);
                 }
             }
         }

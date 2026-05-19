@@ -1,5 +1,7 @@
 ﻿using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.Github;
+using CodeReviewerAI.Services.IStrategy;
+using CodeReviewerAI.Services.Strategy;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 
@@ -15,8 +17,9 @@ namespace CodeReviewerAI.Tests.Unit
                 Token = "Alfredisatoken",
                 AppName = "app"
             });
-
-            var service = new GithubServices(mockOption);
+            var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage() };
+            var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
+            var service = new GithubServices(mockOption,languageStrategy);
 
             service.Should().NotBeNull();
         }
@@ -28,8 +31,10 @@ namespace CodeReviewerAI.Tests.Unit
                 AppName = "",
                 Token = ""
             });
+            var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage() };
+            var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
 
-            Assert.Throws<ArgumentException>(() => new GithubServices(mockOptions));
+            Assert.Throws<ArgumentException>(() => new GithubServices(mockOptions,languageStrategy));
         }
         [Theory]
         [InlineData("app","")]
@@ -41,8 +46,9 @@ namespace CodeReviewerAI.Tests.Unit
                 AppName = appName,
                 Token = token
             });
-
-            Assert.Throws<ArgumentException>(() => new GithubServices(mockOptions));
+            var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage() };
+            var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
+            Assert.Throws<ArgumentException>(() => new GithubServices(mockOptions,languageStrategy));
         }
 
     }

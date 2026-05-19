@@ -1,6 +1,7 @@
 ﻿using CodeReviewerAI.Models;
 using CodeReviewerAI.Services.Github;
 using CodeReviewerAI.Services.IServices;
+using CodeReviewerAI.Services.IStrategy;
 using Microsoft.Extensions.Options;
 using Octokit;
 using System.Text;
@@ -11,9 +12,11 @@ namespace CodeReviewerAI.Services
     {
         private readonly GitHubClient _client;
         private readonly GithubOptions _options;
+        private readonly IStrategyLanguage _strategyProvider;
 
-        public GithubServices(IOptions<GithubOptions> options)
+        public GithubServices(IOptions<GithubOptions> options , IStrategyLanguage strategyProvider)
         {
+            _strategyProvider = strategyProvider;
             _options = options.Value;
             _client = new GitHubClient(new ProductHeaderValue(_options.AppName));
             _client.Credentials = new Credentials(_options.Token);
@@ -28,7 +31,9 @@ namespace CodeReviewerAI.Services
             
             foreach(var file in pullRequestFiles)
             {
-                if (file.Status == "removed" || IsBinary(file.FileName)) continue;
+                string extension = Path.GetExtension(file.FileName);
+                if (file.Status == "removed" || IsBinary(extension) || !_strategyProvider.HasStrategy(extension))
+                    continue;
 
                 string fileHeader = $"---FILE: {file.FileName}---\n";
                 if (string.IsNullOrEmpty(file.Patch))
@@ -62,8 +67,7 @@ namespace CodeReviewerAI.Services
         }
         private bool IsBinary(string filename)
         {
-            string[] binaryExtensions = { ".png", ".jpg", ".jpeg", ".dll", ".exe", ".pdb",".yml",".gitignore"
-            ,".md",".sln",".csproj",".txt"};
+            string[] binaryExtensions = { ".png", ".jpg", ".jpeg", ".dll", ".exe", ".pdb"};
             return binaryExtensions.Any(ext => filename.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
         }
 
