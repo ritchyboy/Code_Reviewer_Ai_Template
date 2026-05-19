@@ -11,6 +11,11 @@ permissions:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    # This is the magic block that fixes your folder structure issue
+    defaults:
+      run:
+        working-directory: CodeReviewerAI
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -26,12 +31,13 @@ jobs:
           dotnet build --configuration Release --no-restore
 
       - name: Run Unit Tests
-        # Target only the Unit project to avoid API usage and hardware dependencies
+        # Since we are already inside the CodeReviewerAI folder,
+        # we just point to the sub-folder directly.
         run: dotnet test CodeReviewerAI.Tests.Unit --configuration Release --no-build
 
       - name: Run Reviewer CLI
         run: >
-          dotnet run --project CodeReviewerAI
+          dotnet run --project CodeReviewerAI/CodeReviewerAI.csproj
           ${{ github.repository_owner }} 
           ${{ github.event.repository.name }} 
           ${{ github.event.pull_request.number }}
