@@ -1,0 +1,40 @@
+name: Code Reviewer CI
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@11bd71f01bbe5b16302e737d363936c807595539
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@3951f0dfe7a07e23138b3c14d95228511674f358
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore and Build
+        run: |
+          dotnet restore
+          dotnet build --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        # Target only the Unit project to avoid API usage and hardware dependencies
+        run: dotnet test CodeReviewerAI.Tests.Unit --configuration Release --no-build
+
+      - name: Run Reviewer CLI
+        run: >
+          dotnet run --project CodeReviewerAI
+          ${{ github.repository_owner }} 
+          ${{ github.event.repository.name }} 
+          ${{ github.event.pull_request.number }}
+        env:
+          Gemini__ApiKey: ${{ secrets.GEMINI_API_KEY }}
+          GitHub__Token: ${{ secrets.GITHUB_TOKEN }}
