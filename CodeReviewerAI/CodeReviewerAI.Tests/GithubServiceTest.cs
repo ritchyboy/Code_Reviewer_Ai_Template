@@ -28,7 +28,7 @@ namespace CodeReviewerAI.Tests.Integration
 
             var service = serviceProvider.GetRequiredService<IGithubServices>();
             var diffs = new List<GithubFileChange>();
-            diffs = await service.pullRequestDiffs(owner,reposName,1);
+            diffs = await service.GetPullRequestDiffsAsync(owner,reposName,1);
 
             diffs.Should().NotBeNull();
         }

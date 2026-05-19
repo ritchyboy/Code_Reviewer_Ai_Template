@@ -31,13 +31,15 @@ namespace CodeReviewerAI.Services
             string reviewCode = string.Empty;
 
             var fileList = new List<GithubFileChange>();
-            fileList = await _githubServices.pullRequestDiffs(owner, reposName, prNumber);
+            fileList = await _githubServices.GetPullRequestDiffsAsync(owner, reposName, prNumber);
             if(fileList.Count == 0)
             {
                 throw new NoNullAllowedException("An empty pullrequest cannot be review");
             }
-            bool isFileExtensionMatch = fileList.All(ext => ext.fileName.
-            EndsWith(new FileInfo(ext.fileName).Extension));
+            string firstExtension = Path.GetExtension(fileList[0].fileName);
+
+            bool isFileExtensionMatch = fileList.All(ext => Path.GetExtension(ext.fileName)
+            .Equals(firstExtension,StringComparison.OrdinalIgnoreCase));
 
             if (!isFileExtensionMatch)
             {
@@ -56,11 +58,11 @@ namespace CodeReviewerAI.Services
                         fileGroup.Append(file.fileName);
                         fileGroup.AppendLine(file.patch);
                     }
-                    string fullRequest = await _promptService.promptManagerAsync(groupe.Ext, fileGroup.ToString());
+                    string fullRequest = await _promptService.GetCompletePromptAsync(groupe.Ext, fileGroup.ToString());
                     fileGroup.Clear();
                     listOfRequest.AppendLine(fullRequest);
                 }
-                pullrequestComment = await _geminiServices.AnalyzeCodeToReview(listOfRequest.ToString());
+                pullrequestComment = await _geminiServices.AnalyzeCodeToReviewAsync(listOfRequest.ToString());
                 return pullrequestComment;
             }
             else
@@ -71,10 +73,10 @@ namespace CodeReviewerAI.Services
                 {
                     reviewCode += file.fileName + file.patch + "\n";
                 }
-                string fullPrompt = await _promptService.promptManagerAsync(firstFile, reviewCode);
+                string fullPrompt = await _promptService.GetCompletePromptAsync(firstFile, reviewCode);
 
 
-                pullrequestComment = await _geminiServices.AnalyzeCodeToReview(fullPrompt);
+                pullrequestComment = await _geminiServices.AnalyzeCodeToReviewAsync(fullPrompt);
 
                 return pullrequestComment;
             }

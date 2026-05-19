@@ -7,13 +7,14 @@ namespace CodeReviewerAI.Services
     public class PromptService: IPromptService
     {
         private readonly IStrategyLanguage _strategyLanguage;
+        private readonly IPromptService _promptService;
         private readonly string baseApplicationPath = AppDomain.CurrentDomain.BaseDirectory;
 
         public PromptService(IStrategyLanguage strategyLanguage)
         {
             _strategyLanguage = strategyLanguage;
         }
-        public async Task<string> getBasePromptAsync()
+        public async Task<string> GetBasePromptAsync()
         {
             string basePrompt = string.Empty;
             string basePromptPath = Path.Combine(baseApplicationPath, "Config", "Base_Persona.txt");
@@ -27,7 +28,7 @@ namespace CodeReviewerAI.Services
             return basePrompt;
         }
 
-        public async Task<string> getOutputSchemaPromptAsync()
+        public async Task<string> GetOutputSchemaPromptAsync()
         {
             string outputPrompt = string.Empty;
             string output_Schema_Path = Path.Combine(baseApplicationPath, "Config", "Output_Schema.txt");
@@ -40,7 +41,7 @@ namespace CodeReviewerAI.Services
 
             return outputPrompt;
         }
-        public async Task<string> languageManagerPromptAsync(string fileExt)
+        public async Task<string> GetLanguagePromptAsync(string fileExt)
         {
             string ext = Path.GetExtension(fileExt);
             string result = await _strategyLanguage.LanguageStrategyImplementation(ext);
@@ -48,28 +49,32 @@ namespace CodeReviewerAI.Services
             return result;
         }
 
-        public async Task<string> promptManagerAsync(string fileExt,string codeSample)
+        public async Task<string> GetCompletePromptAsync(string fileExt,string codeSample)
         {
          
             ArgumentException.ThrowIfNullOrWhiteSpace(codeSample, nameof(codeSample));
-            
-            var getBasePromptTask = getBasePromptAsync();
-            var getLangPromptTask =  languageManagerPromptAsync(fileExt);
-            var getOutputPromptTask = getOutputSchemaPromptAsync();
+            Task<string> getBasePromptTask = _promptService.GetBasePromptAsync();
+            Task<string> getLangPromptTask = _promptService.GetLanguagePromptAsync(fileExt);
+            Task<string> getOutputPromptTask = _promptService.GetOutputSchemaPromptAsync();
 
 
             await Task.WhenAll(getBasePromptTask, getLangPromptTask, getOutputPromptTask);
 
+            string BasePrompt = await getBasePromptTask;
+            string LangPrompt =  await getLangPromptTask;
+            string OutputPrompt = await getOutputPromptTask;
+
+
+
             int estimatedSize = 1200 + codeSample.Length;
             StringBuilder fullPromptBuilder = new StringBuilder(estimatedSize);
        
-            fullPromptBuilder.AppendLine(getBasePromptTask.Result);
-            fullPromptBuilder.AppendLine(getLangPromptTask.Result);
-            fullPromptBuilder.AppendLine(getOutputPromptTask.Result);
+            fullPromptBuilder.AppendLine(BasePrompt);
+            fullPromptBuilder.AppendLine(LangPrompt);
+            fullPromptBuilder.AppendLine(OutputPrompt);
             fullPromptBuilder.AppendLine(codeSample);
             
             return fullPromptBuilder.ToString();
-
 
         }
     }

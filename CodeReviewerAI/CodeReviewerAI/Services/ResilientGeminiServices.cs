@@ -16,10 +16,10 @@ namespace CodeReviewerAI.Services
             _geminiService = geminiServices;
             _resiliencePipeline = resiliencePipelineProvider;
         }
-        public async Task<ReviewResult> AnalyzeCodeToReview(string request)
+        public async Task<ReviewResult> AnalyzeCodeToReviewAsync(string request)
         {
             var pipeline = _resiliencePipeline.GetPipeline("Default");
-            return await pipeline.ExecuteAsync(async ct => await _geminiService.AnalyzeCodeToReview(request));    
+            return await pipeline.ExecuteAsync(async ct => await _geminiService.AnalyzeCodeToReviewAsync(request));    
         }
     }
 }

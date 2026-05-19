@@ -38,10 +38,10 @@ namespace CodeReviewerAI.Tests.Integration
             var promptService = new PromptService(strategyProvider);
 
 
-            string request = await promptService.promptManagerAsync(clientPathTest,testableCode);
+            string request = await promptService.GetCompletePromptAsync(clientPathTest,testableCode);
 
             // Act
-            var result = await service.AnalyzeCodeToReview(request);
+            var result = await service.AnalyzeCodeToReviewAsync(request);
 
             // Assert
             result.Should().NotBeNull();
@@ -56,7 +56,7 @@ namespace CodeReviewerAI.Tests.Integration
             var fakeDiff = "diff --git a/file.txt b/file.txt\n+ Console.WriteLine(\"Hello World\");";
 
             
-            var result = await service.AnalyzeCodeToReview(fakeDiff);
+            var result = await service.AnalyzeCodeToReviewAsync(fakeDiff);
 
           
             result.Should().NotBeNull();   

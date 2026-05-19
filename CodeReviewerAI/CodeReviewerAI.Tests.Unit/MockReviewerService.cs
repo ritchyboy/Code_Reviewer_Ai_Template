@@ -20,7 +20,7 @@ namespace CodeReviewerAI.Tests.Unit
             string mockReposName = "Sandbox_Project";
             int mockPrNumber = 5;
 
-            mockGemini.Setup(x => x.AnalyzeCodeToReview(It.IsAny<string>()))
+            mockGemini.Setup(x => x.AnalyzeCodeToReviewAsync(It.IsAny<string>()))
                 .ReturnsAsync(new ReviewResult
                 {
                     IsApproved = false,
@@ -29,7 +29,7 @@ namespace CodeReviewerAI.Tests.Unit
                     Summary = "Bad code",
                     MarkdownReview = "Mocked: This code has a security flaw."
                 });
-            mockGithub.Setup(x => x.pullRequestDiffs(mockOwner, mockReposName, mockPrNumber))
+            mockGithub.Setup(x => x.GetPullRequestDiffsAsync(mockOwner, mockReposName, mockPrNumber))
                 .ReturnsAsync(new List<GithubFileChange>(){
                     new GithubFileChange
                     {
@@ -39,7 +39,7 @@ namespace CodeReviewerAI.Tests.Unit
                     }
                 });
 
-            mockPrompt.Setup(x => x.promptManagerAsync(It.IsAny<string>(),It.IsAny<string>()))
+            mockPrompt.Setup(x => x.GetCompletePromptAsync(It.IsAny<string>(),It.IsAny<string>()))
                .ReturnsAsync(It.IsAny<string>());
 
             var sut = new ReviewerService(mockGemini.Object, mockGithub.Object, mockPrompt.Object);
@@ -48,7 +48,7 @@ namespace CodeReviewerAI.Tests.Unit
             result.Should().NotBeNull();
             result.MarkdownReview.Should().Be("Mocked: This code has a security flaw.");
 
-            mockGemini.Verify(x => x.AnalyzeCodeToReview(It.IsAny<string>()), Times.Once);
+            mockGemini.Verify(x => x.AnalyzeCodeToReviewAsync(It.IsAny<string>()), Times.Once);
         }
         [Fact]
         public async Task ReviewerService_Should_Return_An_Error_When_Prompt_Is_Empty()
@@ -62,7 +62,7 @@ namespace CodeReviewerAI.Tests.Unit
             int mockPrNumber = 5;
 
 
-            mockPrompt.Setup(x => x.promptManagerAsync(It.IsAny<string>(), It.IsAny<string>()))
+            mockPrompt.Setup(x => x.GetCompletePromptAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(string.Empty);
 
             var sut = new ReviewerService(mockGemini.Object, mockGithub.Object, mockPrompt.Object);
@@ -70,7 +70,7 @@ namespace CodeReviewerAI.Tests.Unit
             Func<Task> result = async () => await sut.ReviewPullrequestAsync(mockOwner, mockReposName, mockPrNumber);
             await result.Should().ThrowAsync<NullReferenceException>();
 
-            mockGemini.Verify(x => x.AnalyzeCodeToReview(It.IsAny<string>()), Times.Never);
+            mockGemini.Verify(x => x.AnalyzeCodeToReviewAsync(It.IsAny<string>()), Times.Never);
         }
     }
 }

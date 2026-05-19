@@ -24,7 +24,7 @@ namespace CodeReviewerAI.Services
             ArgumentException.ThrowIfNullOrEmpty(_options.Token,nameof(_options.Token));
         }
 
-        public async Task<List<GithubFileChange>> pullRequestDiffs(string owner, string repoName, int prNumber)
+        public async Task<List<GithubFileChange>> GetPullRequestDiffsAsync(string owner, string repoName, int prNumber)
         {
             var pullRequestFiles = await _client.Repository.PullRequest.Files(owner, repoName, prNumber);
             var diffs = new List<GithubFileChange>();
@@ -52,7 +52,7 @@ namespace CodeReviewerAI.Services
 
             return diffs;
         }
-        public async Task createReviewCommentAsync(string owner, string repoName, int prNumber,ReviewResult pullRequestComment)
+        public async Task CreateReviewCommentAsync(string owner, string repoName, int prNumber,ReviewResult pullRequestComment)
         {
             StringBuilder commentBuilder = new StringBuilder();
             commentBuilder.AppendLine($"# CodeReviewerAI Report");
@@ -71,7 +71,7 @@ namespace CodeReviewerAI.Services
             return binaryExtensions.Any(ext => filename.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
         }
 
-        public string getApiInfo()
+        public string GetApiInfo()
         {
             var apiInfo = _client.GetLastApiInfo();
 

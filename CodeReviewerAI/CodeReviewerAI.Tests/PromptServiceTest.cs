@@ -32,7 +32,7 @@ namespace CodeReviewerAI.Tests.Integration
             var strategyProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
             var service = new PromptService(strategyProvider);
 
-            string result = await service.promptManagerAsync(clientPathTest, testableCode);
+            string result = await service.GetCompletePromptAsync(clientPathTest, testableCode);
 
             result.Should().NotBeNullOrEmpty("The prompt cannot be build correctly");
         }

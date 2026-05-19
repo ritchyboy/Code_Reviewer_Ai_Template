@@ -14,13 +14,7 @@ public class GeminiServices : IGeminiServices
 
     private readonly Client _client;
     private readonly GeminiOptions _options;
-    private readonly RateLimiter _rateLimiter = new FixedWindowRateLimiter(new FixedWindowRateLimiterOptions
-    {
-        PermitLimit = 15,
-        Window = TimeSpan.FromMinutes(1),
-        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-        QueueLimit = 100
-    });
+    private readonly RateLimiter _rateLimiter;
     
 
     public GeminiServices(IOptions<GeminiOptions> options){ 
@@ -28,9 +22,16 @@ public class GeminiServices : IGeminiServices
         ArgumentException.ThrowIfNullOrEmpty(_options.ApiKey, nameof(_options.ApiKey));
         ArgumentException.ThrowIfNullOrEmpty(_options.Model, nameof(_options.Model));
         _client = new Client(apiKey:_options.ApiKey);
+        _rateLimiter = new FixedWindowRateLimiter(new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = _options.PermitLimit,
+            Window = TimeSpan.FromSeconds(_options.WindowSeconds),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 100
+        });
     }
 
-    public async Task<ReviewResult> AnalyzeCodeToReview(string request)
+    public async Task<ReviewResult> AnalyzeCodeToReviewAsync(string request)
 	{
         using var lease = await _rateLimiter.AcquireAsync(permitCount: 1);
         if (lease.IsAcquired)
@@ -45,7 +46,7 @@ public class GeminiServices : IGeminiServices
                 Console.WriteLine("Gemini did not respond at all");
             }
 
-            string cleanJson = rawResponse.Replace("```json", "").Replace("```", "").Trim();
+            string cleanJson = ExtractJsonResponse(rawResponse);
 
             var options = new JsonSerializerOptions
             {
@@ -71,6 +72,17 @@ public class GeminiServices : IGeminiServices
         {
             throw new RateLimitExceededException((IResponse)_rateLimiter.GetStatistics());
         }
+    }
+    public string ExtractJsonResponse(string rawResponse)
+    {
+        int start = rawResponse.IndexOf("{");
+        int end = rawResponse.LastIndexOf("}");
+
+
+        if (start == -1 || end == -1)
+        return rawResponse;
+
+        return rawResponse.Substring(start, end - start + 1);
     }
 
 }
