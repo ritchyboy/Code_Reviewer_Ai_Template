@@ -36,16 +36,16 @@ namespace CodeReviewerAI.Services
             {
                 throw new NoNullAllowedException("An empty pullrequest cannot be review");
             }
-            string firstExtension = Path.GetExtension(fileList[0].fileName);
+            string firstExtension = Path.GetExtension(fileList[0].FileName);
 
-            bool isFileExtensionMatch = fileList.All(ext => Path.GetExtension(ext.fileName)
+            bool isFileExtensionMatch = fileList.All(ext => Path.GetExtension(ext.FileName)
             .Equals(firstExtension,StringComparison.OrdinalIgnoreCase));
 
             if (!isFileExtensionMatch)
             {
                 // Need a LinQ Group that group element by extention so c++ file with together ts together etc
                 var groupedByExtension = from file in fileList
-                                         group file by Path.GetExtension(file.fileName).ToLower() into g
+                                         group file by Path.GetExtension(file.FileName).ToLower() into g
                                          select new { Ext = g.Key, Files = g };
                                          
                 
@@ -55,7 +55,7 @@ namespace CodeReviewerAI.Services
                     List<GithubFileChange> fileChange = groupe.Files.ToList();
                     foreach(var file in fileChange)
                     {
-                        fileGroup.Append(file.fileName);
+                        fileGroup.Append(file.FileName);
                         fileGroup.AppendLine(file.patch);
                     }
                     string fullRequest = await _promptService.GetCompletePromptAsync(groupe.Ext, fileGroup.ToString());
@@ -67,11 +67,11 @@ namespace CodeReviewerAI.Services
             }
             else
             {
-                string firstFile = fileList[0].fileName;
+                string firstFile = fileList[0].FileName;
 
                 foreach (var file in fileList)
                 {
-                    reviewCode += file.fileName + file.patch + "\n";
+                    reviewCode += file.FileName + file.patch + "\n";
                 }
                 string fullPrompt = await _promptService.GetCompletePromptAsync(firstFile, reviewCode);
 

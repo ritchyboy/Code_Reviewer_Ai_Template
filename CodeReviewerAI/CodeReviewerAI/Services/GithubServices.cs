@@ -43,8 +43,8 @@ namespace CodeReviewerAI.Services
                 string filePatch = file.Patch;
                 var fileInfoData = new GithubFileChange()
                 {
-                    fileHeader = fileHeader,
-                    fileName = file.FileName,
+                    FileHeader = fileHeader,
+                    FileName = file.FileName,
                     patch = filePatch
                 };
                 diffs.Add(fileInfoData);
@@ -57,7 +57,7 @@ namespace CodeReviewerAI.Services
             StringBuilder commentBuilder = new StringBuilder();
             commentBuilder.AppendLine($"# CodeReviewerAI Report");
             commentBuilder.AppendLine($"**Status:** {(pullRequestComment.IsApproved ? "Approved" : "Changes Requested")}");
-            commentBuilder.AppendLine($"**Risk Level:** {pullRequestComment.RiskLevel} ({pullRequestComment.RiskScore}/10)");
+            commentBuilder.AppendLine($"**Risk Level:** {pullRequestComment.RiskLevel} ({pullRequestComment.RiskScore}/100)");
             commentBuilder.AppendLine("-----------------------------------------------");
             commentBuilder.AppendLine("--Summary--");
             commentBuilder.AppendLine(pullRequestComment.Summary);

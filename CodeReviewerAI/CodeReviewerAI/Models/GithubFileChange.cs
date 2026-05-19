@@ -2,8 +2,8 @@
 {
     public class GithubFileChange
     {
-        public string fileHeader { get; set; }
-        public string fileName { get; set; }
+        public string FileHeader { get; set; }
+        public string FileName { get; set; }
         public string patch { get; set; }
     }
 }

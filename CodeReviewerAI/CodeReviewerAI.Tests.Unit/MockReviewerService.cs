@@ -33,8 +33,8 @@ namespace CodeReviewerAI.Tests.Unit
                 .ReturnsAsync(new List<GithubFileChange>(){
                     new GithubFileChange
                     {
-                       fileName = "Sandbox_Test.cs",
-                       fileHeader = $"---FILE: {"Sandbox_Test.cs"}---\n",
+                       FileName = "Sandbox_Test.cs",
+                       FileHeader = $"---FILE: {"Sandbox_Test.cs"}---\n",
                        patch = "Console.WriteLine(\"Hello World\""
                     }
                 });
