@@ -30,7 +30,6 @@ public class GeminiServices : IGeminiServices, IDisposable
             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
             QueueLimit = 100
         });
-        _rateLimiter.Dispose();
     }
 
     public async Task<ReviewResult> AnalyzeCodeToReviewAsync(string request)
