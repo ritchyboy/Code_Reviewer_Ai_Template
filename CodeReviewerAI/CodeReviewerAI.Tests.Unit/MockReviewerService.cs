@@ -51,7 +51,7 @@ namespace CodeReviewerAI.Tests.Unit
             mockGemini.Verify(x => x.AnalyzeCodeToReviewAsync(It.IsAny<string>()), Times.Once);
         }
         [Fact]
-        public async Task ReviewerService_Should_Return_An_Error_When_Prompt_Is_Empty()
+        public async Task ReviewerService_Should_Return_An_Error_When_Repo_Is_Empty()
         {
             var mockGemini = new Mock<IGeminiServices>();
             var mockGithub = new Mock<IGithubServices>();
@@ -62,9 +62,8 @@ namespace CodeReviewerAI.Tests.Unit
             int mockPrNumber = 5;
 
 
-            mockPrompt.Setup(x => x.GetCompletePromptAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(string.Empty);
-
+            mockGithub.Setup(x => x.GetPullRequestDiffsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
+            .ReturnsAsync(new List<GithubFileChange>());
             var sut = new ReviewerService(mockGemini.Object, mockGithub.Object, mockPrompt.Object);
 
             Func<Task> result = async () => await sut.ReviewPullrequestAsync(mockOwner, mockReposName, mockPrNumber);
