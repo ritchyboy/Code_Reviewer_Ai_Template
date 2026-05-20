@@ -9,12 +9,13 @@ using System.Text.Json;
 using System.Threading.RateLimiting;
 
 
-public class GeminiServices : IGeminiServices
+public class GeminiServices : IGeminiServices, IDisposable
 {
 
     private readonly Client _client;
     private readonly GeminiOptions _options;
     private readonly RateLimiter _rateLimiter;
+    public bool _disposed;
     
 
     public GeminiServices(IOptions<GeminiOptions> options){ 
@@ -29,6 +30,7 @@ public class GeminiServices : IGeminiServices
             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
             QueueLimit = 100
         });
+        _rateLimiter.Dispose();
     }
 
     public async Task<ReviewResult> AnalyzeCodeToReviewAsync(string request)
@@ -73,6 +75,16 @@ public class GeminiServices : IGeminiServices
             throw new RateLimitExceededException((IResponse)_rateLimiter.GetStatistics());
         }
     }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+
+        _rateLimiter.Dispose();
+        _client.Dispose();
+        _disposed = true;
+    }
+
     public string ExtractJsonResponse(string rawResponse)
     {
         int start = rawResponse.IndexOf("{");

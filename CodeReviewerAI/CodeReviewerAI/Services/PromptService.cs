@@ -59,9 +59,9 @@ namespace CodeReviewerAI.Services
 
             await Task.WhenAll(getBasePromptTask, getLangPromptTask, getOutputPromptTask);
 
-            string BasePrompt = getBasePromptTask.Result;
-            string LangPrompt =  getLangPromptTask.Result;
-            string OutputPrompt = getOutputPromptTask.Result;
+            string BasePrompt = await getBasePromptTask;
+            string LangPrompt =  await getLangPromptTask;
+            string OutputPrompt = await getOutputPromptTask;
 
 
 

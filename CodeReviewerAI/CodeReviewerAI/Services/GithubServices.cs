@@ -45,7 +45,7 @@ namespace CodeReviewerAI.Services
                 {
                     FileHeader = fileHeader,
                     FileName = file.FileName,
-                    patch = filePatch
+                    Patch = filePatch
                 };
                 diffs.Add(fileInfoData);
             }

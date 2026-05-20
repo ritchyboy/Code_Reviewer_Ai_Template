@@ -34,7 +34,7 @@ namespace CodeReviewerAI.Services
             fileList = await _githubServices.GetPullRequestDiffsAsync(owner, reposName, prNumber);
             if(fileList.Count == 0)
             {
-                throw new NoNullAllowedException("An empty pullrequest cannot be review");
+                throw new InvalidOperationException("An empty pullrequest cannot be review");
             }
             string firstExtension = Path.GetExtension(fileList[0].FileName);
 
@@ -56,7 +56,7 @@ namespace CodeReviewerAI.Services
                     foreach(var file in fileChange)
                     {
                         fileGroup.Append(file.FileName);
-                        fileGroup.AppendLine(file.patch);
+                        fileGroup.AppendLine(file.Patch);
                     }
                     string fullRequest = await _promptService.GetCompletePromptAsync(groupe.Ext, fileGroup.ToString());
                     fileGroup.Clear();
@@ -71,7 +71,7 @@ namespace CodeReviewerAI.Services
 
                 foreach (var file in fileList)
                 {
-                    reviewCode += file.FileName + file.patch + "\n";
+                    reviewCode += file.FileName + file.Patch + "\n";
                 }
                 string fullPrompt = await _promptService.GetCompletePromptAsync(firstFile, reviewCode);
 

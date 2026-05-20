@@ -35,7 +35,7 @@ namespace CodeReviewerAI.Tests.Unit
                     {
                        FileName = "Sandbox_Test.cs",
                        FileHeader = $"---FILE: {"Sandbox_Test.cs"}---\n",
-                       patch = "Console.WriteLine(\"Hello World\""
+                       Patch = "Console.WriteLine(\"Hello World\""
                     }
                 });
 
@@ -68,7 +68,7 @@ namespace CodeReviewerAI.Tests.Unit
             var sut = new ReviewerService(mockGemini.Object, mockGithub.Object, mockPrompt.Object);
 
             Func<Task> result = async () => await sut.ReviewPullrequestAsync(mockOwner, mockReposName, mockPrNumber);
-            await result.Should().ThrowAsync<NullReferenceException>();
+            await result.Should().ThrowAsync<InvalidOperationException>();
 
             mockGemini.Verify(x => x.AnalyzeCodeToReviewAsync(It.IsAny<string>()), Times.Never);
         }
