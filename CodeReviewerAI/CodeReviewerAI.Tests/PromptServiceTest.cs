@@ -10,7 +10,7 @@ namespace CodeReviewerAI.Tests.Integration
         [Fact]
         public void can_be_constructed()
         {
-            var strategyProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var strategyProvider = serviceProvider.GetRequiredService<ILanguageStrategyProvider>();
 
             var service = new PromptService(strategyProvider);
 
@@ -29,7 +29,7 @@ namespace CodeReviewerAI.Tests.Integration
 
             string testableCode = await File.ReadAllTextAsync(clientPathTest);
 
-            var strategyProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var strategyProvider = serviceProvider.GetRequiredService<ILanguageStrategyProvider>();
             var service = new PromptService(strategyProvider);
 
             string result = await service.GetCompletePromptAsync(clientPathTest, testableCode);

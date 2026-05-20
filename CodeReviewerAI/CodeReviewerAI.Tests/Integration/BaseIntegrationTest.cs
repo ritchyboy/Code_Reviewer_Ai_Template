@@ -35,9 +35,9 @@ namespace CodeReviewerAI.Tests.Integration
 
             service.AddScoped<LanguageStrategyProvider>();
 
-            service.AddScoped<IGeminiServices, GeminiServices>();
-            service.AddScoped<IGithubServices, GithubServices>();
-            service.AddScoped<IStrategyLanguage, LanguageStrategyProvider>();
+            service.AddScoped<IGeminiServices, GeminiService>();
+            service.AddScoped<IGithubServices, GithubService>();
+            service.AddScoped<ILanguageStrategyProvider, LanguageStrategyProvider>();
             service.AddScoped<IPromptService, PromptService>();
             service.AddScoped<IReviewerService, ReviewerService>();
 

@@ -34,7 +34,7 @@ namespace CodeReviewerAI.Tests.Integration
 
             string testableCode = await File.ReadAllTextAsync(clientPathTest);
 
-            var strategyProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var strategyProvider = serviceProvider.GetRequiredService<ILanguageStrategyProvider>();
             var promptService = new PromptService(strategyProvider);
 
 

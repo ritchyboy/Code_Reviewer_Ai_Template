@@ -66,17 +66,17 @@ namespace CodeReviewerAI
 
             builder.Services.AddScoped<LanguageStrategyProvider>();
 
-            builder.Services.AddScoped<GeminiServices>();
+            builder.Services.AddScoped<GeminiService>();
             builder.Services.AddScoped<IGeminiServices>(ServiceProvider =>
             {
-                var coreService = ServiceProvider.GetRequiredService<GeminiServices>();
+                var coreService = ServiceProvider.GetRequiredService<GeminiService>();
 
                 var pipelineProvider = ServiceProvider.GetRequiredService<ResiliencePipelineProvider<string>>();
 
                 return new ResilientGeminiServices(coreService, pipelineProvider);
             });
-            builder.Services.AddScoped<IGithubServices, GithubServices>();
-            builder.Services.AddScoped<IStrategyLanguage,LanguageStrategyProvider>();
+            builder.Services.AddScoped<IGithubServices, GithubService>();
+            builder.Services.AddScoped<ILanguageStrategyProvider,LanguageStrategyProvider>();
             builder.Services.AddScoped<IPromptService, PromptService>();
             builder.Services.AddScoped<IReviewerService, ReviewerService>();
 

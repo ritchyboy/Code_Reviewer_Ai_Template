@@ -15,7 +15,7 @@ namespace CodeReviewerAI.Tests.Unit
                 Provider = "Google"
             });
 
-            var service = new GeminiServices(mockOption);
+            var service = new GeminiService(mockOption);
 
             Assert.NotNull(service);
         }
@@ -26,7 +26,7 @@ namespace CodeReviewerAI.Tests.Unit
             
             var options = Options.Create(new GeminiOptions { ApiKey = "" });
 
-            Assert.Throws<ArgumentException>(() => new GeminiServices(options));
+            Assert.Throws<ArgumentException>(() => new GeminiService(options));
         }
         
         

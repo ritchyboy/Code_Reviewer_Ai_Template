@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CodeReviewerAI.Services.Strategy
 {
-    public class LanguageStrategyProvider : IStrategyLanguage
+    public class LanguageStrategyProvider : ILanguageStrategyProvider
     {
         private readonly IEnumerable<ILanguageStrategy> _strategies;
 

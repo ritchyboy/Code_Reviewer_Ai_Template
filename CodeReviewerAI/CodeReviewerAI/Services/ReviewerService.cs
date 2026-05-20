@@ -28,7 +28,6 @@ namespace CodeReviewerAI.Services
         {
             StringBuilder listOfRequest = new StringBuilder();
             ReviewResult pullrequestComment = new ReviewResult();
-            string reviewCode = string.Empty;
 
             var fileList = new List<GithubFileChange>();
             fileList = await _githubServices.GetPullRequestDiffsAsync(owner, reposName, prNumber);
@@ -49,16 +48,16 @@ namespace CodeReviewerAI.Services
                                          select new { Ext = g.Key, Files = g };
                                          
                 
-                foreach (var groupe in groupedByExtension)
+                foreach (var group in groupedByExtension)
                 {
                     StringBuilder fileGroup = new StringBuilder();
-                    List<GithubFileChange> fileChange = groupe.Files.ToList();
+                    List<GithubFileChange> fileChange = group.Files.ToList();
                     foreach(var file in fileChange)
                     {
                         fileGroup.Append(file.FileName);
                         fileGroup.AppendLine(file.Patch);
                     }
-                    string fullRequest = await _promptService.GetCompletePromptAsync(groupe.Ext, fileGroup.ToString());
+                    string fullRequest = await _promptService.GetCompletePromptAsync(group.Ext, fileGroup.ToString());
                     fileGroup.Clear();
                     listOfRequest.AppendLine(fullRequest);
                 }
@@ -71,10 +70,10 @@ namespace CodeReviewerAI.Services
 
                 foreach (var file in fileList)
                 {
-                    reviewCode += file.FileName + file.Patch + "\n";
+                    listOfRequest.Append(file.FileName);
+                    listOfRequest.AppendLine(file.Patch);
                 }
-                string fullPrompt = await _promptService.GetCompletePromptAsync(firstFile, reviewCode);
-
+                string fullPrompt = await _promptService.GetCompletePromptAsync(firstFile, listOfRequest.ToString());
 
                 pullrequestComment = await _geminiServices.AnalyzeCodeToReviewAsync(fullPrompt);
 

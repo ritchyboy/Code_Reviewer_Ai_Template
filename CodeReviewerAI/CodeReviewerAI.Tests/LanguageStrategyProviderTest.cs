@@ -10,7 +10,7 @@ namespace CodeReviewerAI.Tests.Integration
         [Fact]
         public void can_be_build_with_strategies()
         {
-            var languageProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var languageProvider = serviceProvider.GetRequiredService<ILanguageStrategyProvider>();
 
             Assert.NotNull(languageProvider);
         }
@@ -22,7 +22,7 @@ namespace CodeReviewerAI.Tests.Integration
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "Lang_CSharp.txt");
             string languageFile = await File.ReadAllTextAsync(path);
 
-            var languageProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var languageProvider = serviceProvider.GetRequiredService<ILanguageStrategyProvider>();
 
             var result = await languageProvider.LanguageStrategyImplementation(ext);
 
@@ -40,7 +40,7 @@ namespace CodeReviewerAI.Tests.Integration
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "Lang_CPP.txt");
             string languageFile = await File.ReadAllTextAsync(path);
 
-            var languageProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var languageProvider = serviceProvider.GetRequiredService<ILanguageStrategyProvider>();
 
             var result = await languageProvider.LanguageStrategyImplementation(ext);
 
@@ -50,7 +50,7 @@ namespace CodeReviewerAI.Tests.Integration
         [InlineData(".notsupported")]
         public async Task not_supported_exception_return_when_extension_is_not_supported(string ext)
         {
-            var languageProvider = serviceProvider.GetRequiredService<IStrategyLanguage>();
+            var languageProvider = serviceProvider.GetRequiredService<ILanguageStrategyProvider>();
 
             Func<Task> result = () => languageProvider.LanguageStrategyImplementation(ext);
 

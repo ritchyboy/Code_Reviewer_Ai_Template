@@ -19,7 +19,7 @@ namespace CodeReviewerAI.Tests.Unit
             });
             var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage() };
             var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
-            var service = new GithubServices(mockOption,languageStrategy);
+            var service = new GithubService(mockOption,languageStrategy);
 
             service.Should().NotBeNull();
         }
@@ -34,7 +34,7 @@ namespace CodeReviewerAI.Tests.Unit
             var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage() };
             var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
 
-            Assert.Throws<ArgumentException>(() => new GithubServices(mockOptions,languageStrategy));
+            Assert.Throws<ArgumentException>(() => new GithubService(mockOptions,languageStrategy));
         }
         [Theory]
         [InlineData("app","")]
@@ -48,7 +48,7 @@ namespace CodeReviewerAI.Tests.Unit
             });
             var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage() };
             var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
-            Assert.Throws<ArgumentException>(() => new GithubServices(mockOptions,languageStrategy));
+            Assert.Throws<ArgumentException>(() => new GithubService(mockOptions,languageStrategy));
         }
 
     }

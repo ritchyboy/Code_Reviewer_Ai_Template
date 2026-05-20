@@ -6,10 +6,10 @@ namespace CodeReviewerAI.Services
 {
     public class PromptService: IPromptService
     {
-        private readonly IStrategyLanguage _strategyLanguage;
+        private readonly ILanguageStrategyProvider _strategyLanguage;
         private readonly string baseApplicationPath = AppDomain.CurrentDomain.BaseDirectory;
 
-        public PromptService(IStrategyLanguage strategyLanguage)
+        public PromptService(ILanguageStrategyProvider strategyLanguage)
         {
             _strategyLanguage = strategyLanguage;
         }

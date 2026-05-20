@@ -8,13 +8,13 @@ using System.Text;
 
 namespace CodeReviewerAI.Services
 {
-    public class GithubServices: IGithubServices
+    public class GithubService: IGithubServices
     {
         private readonly GitHubClient _client;
         private readonly GithubOptions _options;
-        private readonly IStrategyLanguage _strategyProvider;
+        private readonly ILanguageStrategyProvider _strategyProvider;
 
-        public GithubServices(IOptions<GithubOptions> options , IStrategyLanguage strategyProvider)
+        public GithubService(IOptions<GithubOptions> options , ILanguageStrategyProvider strategyProvider)
         {
             _strategyProvider = strategyProvider;
             _options = options.Value;

@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Threading.RateLimiting;
 
 
-public class GeminiServices : IGeminiServices, IDisposable
+public class GeminiService : IGeminiServices, IDisposable
 {
 
     private readonly Client _client;
@@ -18,7 +18,7 @@ public class GeminiServices : IGeminiServices, IDisposable
     public bool _disposed;
     
 
-    public GeminiServices(IOptions<GeminiOptions> options){ 
+    public GeminiService(IOptions<GeminiOptions> options){ 
         _options = options.Value;
         ArgumentException.ThrowIfNullOrEmpty(_options.ApiKey, nameof(_options.ApiKey));
         ArgumentException.ThrowIfNullOrEmpty(_options.Model, nameof(_options.Model));
