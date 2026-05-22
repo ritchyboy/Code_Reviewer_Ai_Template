@@ -3,7 +3,7 @@
 
 namespace CodeReviewerAI.Data.Models
 {
-    public class ReviewRecord
+    public sealed class ReviewRecord
     {
         [Key] 
         public int Id { get; set; }
@@ -17,9 +17,9 @@ namespace CodeReviewerAI.Data.Models
 
 
         public int ModelId { get; set; }
-        public virtual AiModelsReviewer Model { get; set; }
+        public AiModelsReviewer Model { get; set; }
 
 
-        public virtual List<FileReview> Files { get; set; } = new();
+        public List<FileReview> Files { get; set; } = new();
     }
 }

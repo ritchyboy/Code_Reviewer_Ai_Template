@@ -1,4 +1,5 @@
-﻿using CodeReviewerAI.Models;
+﻿using CodeReviewerAI.Data;
+using CodeReviewerAI.Models;
 using CodeReviewerAI.Services;
 using CodeReviewerAI.Services.Gemini;
 using CodeReviewerAI.Services.Github;
@@ -6,13 +7,13 @@ using CodeReviewerAI.Services.IServices;
 using CodeReviewerAI.Services.IStrategy;
 using CodeReviewerAI.Services.Strategy;
 using Google;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Polly;
 using Polly.Registry;
 using Polly.Retry;
-using System;
 
 namespace CodeReviewerAI
 {
@@ -56,7 +57,17 @@ namespace CodeReviewerAI
                     UseJitter = true
                 });
             });
-
+           //First find the database where it going to stay and also it not needed for now 
+          /*  builder.Services.AddDbContext<AppDbContext>(option =>
+            {
+                var connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING"
+                    , EnvironmentVariableTarget.User);
+                }
+                option.UseSqlServer(connectionString);
+            });*/
             builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
             builder.Services.Configure<GithubOptions>(builder.Configuration.GetSection("Github"));
 

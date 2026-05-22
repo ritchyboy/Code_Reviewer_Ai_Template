@@ -9,16 +9,9 @@ namespace CodeReviewerAI.Data
         public DbSet<FileReview> FileReviews { get; set; }
         public DbSet<AiModelsReviewer> AiModelsReviewers { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        public AppDbContext(DbContextOptions<AppDbContext> option) : base(option)
         {
-            var connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                connectionString = Environment.GetEnvironmentVariable("SQL_CONNECTION_STRING"
-                ,EnvironmentVariableTarget.User);
-            }
 
-            options.UseSqlServer(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

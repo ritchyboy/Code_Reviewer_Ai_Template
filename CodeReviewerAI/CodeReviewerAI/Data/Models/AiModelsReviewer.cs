@@ -1,6 +1,6 @@
 ﻿namespace CodeReviewerAI.Data.Models
 {
-    public class AiModelsReviewer
+    public sealed class AiModelsReviewer
     {
         public int Id { get; set; }
         public string ModelName { get; set; }

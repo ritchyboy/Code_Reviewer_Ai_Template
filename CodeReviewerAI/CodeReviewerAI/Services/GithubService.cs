@@ -18,10 +18,10 @@ namespace CodeReviewerAI.Services
         {
             _strategyProvider = strategyProvider;
             _options = options.Value;
-            _client = new GitHubClient(new ProductHeaderValue(_options.AppName));
-            _client.Credentials = new Credentials(_options.Token);
             ArgumentException.ThrowIfNullOrEmpty(_options.AppName,nameof(_options.AppName));
             ArgumentException.ThrowIfNullOrEmpty(_options.Token,nameof(_options.Token));
+            _client = new GitHubClient(new ProductHeaderValue(_options.AppName));
+            _client.Credentials = new Credentials(_options.Token);
         }
 
         public async Task<List<GithubFileChange>> GetPullRequestDiffsAsync(string owner, string repoName, int prNumber)

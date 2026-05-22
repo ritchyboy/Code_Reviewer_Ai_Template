@@ -3,14 +3,14 @@
 
 namespace CodeReviewerAI.Data.Models
 {
-    public class FileReview
+    public sealed class FileReview
     {
         [Key]
         public int Id { get; set; }
 
 
         public int ReviewRecordId { get; set; }
-        public virtual ReviewRecord ReviewRecord { get; set; }
+        public ReviewRecord ReviewRecord { get; set; }
 
         public string FileName { get; set; }
         public string Language { get; set; }

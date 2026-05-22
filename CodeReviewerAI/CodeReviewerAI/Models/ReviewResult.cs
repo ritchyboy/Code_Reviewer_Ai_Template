@@ -2,7 +2,7 @@
 
 namespace CodeReviewerAI.Models
 {
-    public class ReviewResult
+    public sealed class ReviewResult
     {
         [JsonPropertyName("is_approved")]
         public bool IsApproved { get; set; }

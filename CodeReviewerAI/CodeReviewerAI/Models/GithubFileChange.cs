@@ -1,6 +1,6 @@
 ﻿namespace CodeReviewerAI.Models
 {
-    public class GithubFileChange
+    public sealed class GithubFileChange
     {
         public string FileHeader { get; set; }
         public string FileName { get; set; }
