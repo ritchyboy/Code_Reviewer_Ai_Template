@@ -6,6 +6,7 @@ using Google.GenAI;
 using Microsoft.Extensions.Options;
 using Octokit;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.RateLimiting;
 
 
@@ -86,14 +87,11 @@ public class GeminiService : IGeminiServices, IDisposable
 
     public string ExtractJsonResponse(string rawResponse)
     {
-        int start = rawResponse.IndexOf("{");
-        int end = rawResponse.LastIndexOf("}");
+        Regex match = new Regex(@"^\{.\*}$");
 
+        string value = match.Match(rawResponse).ToString();
 
-        if (start == -1 || end == -1)
-        return rawResponse;
-
-        return rawResponse.Substring(start, end - start + 1);
+        return value;
     }
 
 }
