@@ -87,11 +87,14 @@ public class GeminiService : IGeminiServices, IDisposable
 
     public string ExtractJsonResponse(string rawResponse)
     {
-        Regex match = new Regex(@"^\{.\*}$");
+        Regex match = new Regex(@"\{.*\}", RegexOptions.Singleline);
 
-        string value = match.Match(rawResponse).ToString();
+        Match result = match.Match(rawResponse);
 
-        return value;
+        if(result.Success)
+           return result.Value;
+
+        return string.Empty;
     }
 
 }
