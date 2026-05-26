@@ -67,8 +67,7 @@ namespace CodeReviewerAI.Services
         }
         private bool IsBinary(string filename)
         {
-            string[] binaryExtensions = { ".png", ".jpg", ".jpeg", ".dll", ".exe", ".pdb"};
-            return binaryExtensions.Any(ext => filename.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+            return _options.BinaryExtensions.Any(ext => filename.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
         }
 
         public string GetApiInfo()
