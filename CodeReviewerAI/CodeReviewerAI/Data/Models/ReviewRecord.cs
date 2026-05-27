@@ -11,7 +11,7 @@ namespace CodeReviewerAI.Data.Models
         public string RepoName { get; set; } 
         public int PrNumber { get; set; }
         public string RiskLevel { get; set; }
-        public double RiskScore { get; set; }
+        public int RiskScore { get; set; }
         public double ExecutionTime { get; set; }
         public DateTime DateReviewed { get; set; } = DateTime.UtcNow;
 

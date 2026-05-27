@@ -1,5 +1,6 @@
 ﻿using CodeReviewerAI.Services.IServices;
 using CodeReviewerAI.Services.IStrategy;
+using System.Reflection;
 using System.Text;
 
 namespace CodeReviewerAI.Services
@@ -25,6 +26,23 @@ namespace CodeReviewerAI.Services
             basePrompt = await File.ReadAllTextAsync(basePromptPath);
 
             return basePrompt;
+        }
+        //Future change I should implement on how we will read file instead of the old method// 
+        public async Task<string> GetBasePromptToImplementLater()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+
+            string resourceName = "CodeReviewerAI.Config.Base_Persona.txt";
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream == null) throw new Exception("Resource not found!");
+
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
         }
 
         public async Task<string> GetOutputSchemaPromptAsync()
