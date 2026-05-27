@@ -56,7 +56,6 @@ namespace CodeReviewerAI.Services
                 foreach (var group in groupedByExtension)
                 {
                     StringBuilder fileGroup = new StringBuilder();
-                    StringBuilder languageRequest = new StringBuilder();
                     List<GithubFileChange> fileChange = group.Files.ToList();
                     foreach(var file in fileChange)
                     {
@@ -64,11 +63,9 @@ namespace CodeReviewerAI.Services
                         fileGroup.AppendLine(file.Patch);
                     }
                     string request = await _promptService.GetLanguagePromptAsync(group.Ext);
-                    languageRequest.AppendLine(request);
+                    listOfRequest.AppendLine(request);
                     pullRequestDiffs.AppendLine(fileGroup.ToString());
                     fileGroup.Clear();
-                    languageRequest.Clear();
-                    listOfRequest.AppendLine(languageRequest.ToString());
                 }
                 string outputSchemas = await _promptService.GetOutputSchemaPromptAsync();
                 listOfRequest.AppendLine(outputSchemas);
