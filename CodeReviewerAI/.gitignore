@@ -1,0 +1,28 @@
+## Ignore Visual Studio temporary files, build results, and user settings
+.vs/
+**/.vs/
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userprefs
+.git
+.github/copilot-instructions.md
+CodeReviewerAI.csproj.Backup.tmp
+*/Properties/
+
+## Ignore environment variables and secrets (Safety First!)
+.env
+.DS_Store
+
+
+## Ignore Test Results (but KEEP the test code!)
+TestResults/
+
+# Python Automation
+Automation/venv/
+Automation/.pytest_cache/
+Automation/__pycache__/
+Automation/tests/__pycache__/

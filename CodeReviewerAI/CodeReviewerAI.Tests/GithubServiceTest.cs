@@ -1,0 +1,36 @@
+﻿using CodeReviewerAI.Models;
+using CodeReviewerAI.Services.IServices;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CodeReviewerAI.Tests.Integration
+{
+    public class GithubServiceTest : BaseIntegrationTest
+    {
+
+        [Fact]
+        public void services_can_be_constructed()
+        {
+            // Act
+            var services = serviceProvider.GetRequiredService<IGithubServices>() ;
+
+            // Assert
+            services.Should().NotBeNull();
+        }
+
+
+        [Fact]
+        public async Task Analyze_PullRequest_Diff_For_Response_From_Github()
+        {
+            string owner = "ritchyboy";
+            string reposName = "SandBox_Test";
+
+
+            var service = serviceProvider.GetRequiredService<IGithubServices>();
+            var diffs = new List<GithubFileChange>();
+            diffs = await service.GetPullRequestDiffsAsync(owner,reposName,1);
+
+            diffs.Should().NotBeNull();
+        }
+    }
+}

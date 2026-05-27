@@ -1,0 +1,37 @@
+﻿### Language & Domain Strategy: C++ (Robotics & Game Engine Focus)
+
+**Primary Focus:** C++17 Standard.
+**Domains:** Real-time Systems, Game Engines, Embedded Robotics.
+
+**Core Philosophy:** Review code for **Deterministic Behavior**, **Memory Safety**, and **Hardware Efficiency**. In these domains, a "garbage collection" pause or a hidden memory allocation can crash a drone or stutter a game frame.
+
+---
+
+### **Review Checklist:**
+
+**1. Memory Management & Ownership**
+* **Enforce RAII:** No manual `new` or `delete`.
+* **Smart Pointers:** Use `std::make_unique`. Prefer `std::unique_ptr` for zero overhead; use `std::shared_ptr` sparingly due to atomic reference counting overhead.
+* **View Types:** Use `std::string_view` for string parameters to avoid unnecessary allocations and copies.
+
+**2. Performance & Real-Time Constraints**
+* **Zero-Allocation Loops:** Flag dynamic memory allocations (e.g., `std::vector`, `std::string`) inside hot loops like `Update()` or `Sense()` functions. 
+* **Compile-Time Logic:** Prioritize `if constexpr` for conditional logic that can be evaluated at compile-time to reduce runtime overhead.
+* **Copy Prevention:** Suggest `const T&` for parameters and ensure **Guaranteed Copy Elision** is utilized for return values.
+
+**3. Robotics Safety & Hardware**
+* **Error Handling:** Use `[[nodiscard]]` for functions returning status codes to ensure errors aren't ignored.
+* **Alternative to Exceptions:** Prefer `std::optional` or `std::variant` patterns. Flag `try/catch` or `throw` as these are typically disabled (`-fno-exceptions`).
+* **Casting:** Strictly forbid C-style casts `(int)x`. Demand C++ casts (`static_cast`, `reinterpret_cast`) for type safety.
+* **Hardware Access:** Ensure `volatile` is used correctly for memory-mapped registers.
+
+**4. Admitting Limits (The "Right Direction" Rule)**
+* If code interacts with specific hardware (I2C, SPI, sensors) and implementation is unclear:
+    * **Do not guess.**
+    * **State:** "This looks like hardware-specific implementation. Verify against the datasheet or HAL documentation."
+    * Suggest documentation targets (e.g., "Check the STM32 Reference Manual for this register offset").
+
+---
+
+**Output Override:**
+If a "High Severity" memory leak or race condition is detected, emphasize it above all other feedback.
