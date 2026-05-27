@@ -1,9 +1,63 @@
-
 # CodeReviewerAI
 
 CodeReviewerAI is a .NET-based backend utility designed to automate GitHub Pull Request code reviews using the Gemini API. It performs automated static analysis, identifies security and architectural flaws, and computes a risk assessment score before reporting feedback.
 
 The primary objective of Phase 1 was to establish a resilient core pipeline using decoupled, production-grade design patterns.
+
+---
+
+## Prerequisites and Configuration
+
+The application requires access to the GitHub API and the Google Gemini API. These must be configured via environment variables or your local `appsettings.json` file before launching the execution layer.
+
+### Required Credentials
+
+* **`GEMINI_API_KEY`**: A valid API key generated via Google AI Studio to authenticate requests to the Gemini 3.5 Flash engine.
+* **`GITHUB_TOKEN`**: A GitHub Personal Access Token (PAT) with repository read/write permissions to fetch the pull request diffs and publish the completed review comments.
+
+### Configuration Layout
+
+Ensure your local configuration or environment block maps to the following structural schema:
+
+```json
+{
+  "GeminiProvider": {
+    "ApiKey": "YOUR_GEMINI_API_KEY"
+  },
+  "GitHubProvider": {
+    "AuthToken": "YOUR_GITHUB_TOKEN"
+  }
+}
+
+```
+
+---
+
+## Operational Model
+
+Phase 1 operates strictly as a Command Line Interface (CLI) utility designed for direct execution or manual integration into a continuous integration (CI) pipeline. It is not an automated background listener.
+
+### Local Execution
+
+To invoke the review engine manually against a specific repository target, execute the compiled binary via the terminal:
+
+```bash
+dotnet run --project CodeReviewerAI.Worker --owner "your-github-username" --repo "target-repository" --pr 42
+
+```
+
+### CI/CD Pipeline Integration
+
+To utilize this tool as a static analysis step within a GitHub Actions workflow, add the execution block directly into your repository's workflow configuration file:
+
+```yaml
+- name: Run Automated Code Review
+  run: dotnet run --project CodeReviewerAI.Worker --owner ${{ github.repository_owner }} --repo ${{ github.event.repository.name }} --pr ${{ github.event.number }}
+  env:
+    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+```
 
 ---
 
