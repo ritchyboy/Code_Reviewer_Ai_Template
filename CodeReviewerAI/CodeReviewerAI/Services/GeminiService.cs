@@ -16,7 +16,7 @@ public class GeminiService : IGeminiServices, IDisposable
     private readonly Client _client;
     private readonly GeminiOptions _options;
     private readonly RateLimiter _rateLimiter;
-    public bool _disposed;
+    private bool _disposed;
     
 
     public GeminiService(IOptions<GeminiOptions> options){ 
@@ -43,11 +43,6 @@ public class GeminiService : IGeminiServices, IDisposable
             model: _options.Model, contents: request);
 
             string rawResponse = response.Candidates[0].Content.Parts[0].Text;
-            if (string.IsNullOrEmpty(rawResponse))
-            {
-                Console.WriteLine("Gemini did not respond at all");
-            }
-
             string cleanJson = ExtractJsonResponse(rawResponse);
 
             var options = new JsonSerializerOptions

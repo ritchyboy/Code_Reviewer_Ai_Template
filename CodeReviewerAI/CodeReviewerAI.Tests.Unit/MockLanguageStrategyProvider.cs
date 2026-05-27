@@ -20,7 +20,7 @@ namespace CodeReviewerAI.Tests.Unit
     public class MockLanguageStrategyProvider
     {
         [Fact]
-        public async Task initiate_language_strategy_provider()
+        public async Task Initiate_LanguageStrategyProvider()
         {
             var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguage()};
             var languageStrategy = new LanguageStrategyProvider(mockListStrategy);
@@ -29,7 +29,7 @@ namespace CodeReviewerAI.Tests.Unit
             result.Should().NotBeNullOrEmpty();
         }
         [Fact]
-        public async Task return_file_not_found_error()
+        public async Task Return_FileNotFound_Error()
         {
             var mockListStrategy = new List<ILanguageStrategy>() { new MockLanguageFakeFile() };
             var languageStrategy = new LanguageStrategyProvider(mockListStrategy);

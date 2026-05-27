@@ -26,7 +26,12 @@ namespace CodeReviewerAI.Services
         }
         public async Task<ReviewResult> ReviewPullrequestAsync(string owner,string reposName,int prNumber)
         {
+            StringBuilder pullRequestDiffs = new StringBuilder();
             StringBuilder listOfRequest = new StringBuilder();
+
+            string basePrompt = await _promptService.GetBasePromptAsync();
+
+            listOfRequest.AppendLine(basePrompt);
             ReviewResult pullrequestComment = new ReviewResult();
 
             var fileList = new List<GithubFileChange>();
@@ -51,16 +56,25 @@ namespace CodeReviewerAI.Services
                 foreach (var group in groupedByExtension)
                 {
                     StringBuilder fileGroup = new StringBuilder();
+                    StringBuilder languageRequest = new StringBuilder();
                     List<GithubFileChange> fileChange = group.Files.ToList();
                     foreach(var file in fileChange)
                     {
                         fileGroup.Append(file.FileName);
                         fileGroup.AppendLine(file.Patch);
                     }
-                    string fullRequest = await _promptService.GetCompletePromptAsync(group.Ext, fileGroup.ToString());
+                    string request = await _promptService.GetLanguagePromptAsync(group.Ext);
+                    languageRequest.AppendLine(request);
+                    pullRequestDiffs.AppendLine(fileGroup.ToString());
                     fileGroup.Clear();
-                    listOfRequest.AppendLine(fullRequest);
+                    languageRequest.Clear();
+                    listOfRequest.AppendLine(languageRequest.ToString());
                 }
+                string outputSchemas = await _promptService.GetOutputSchemaPromptAsync();
+                listOfRequest.AppendLine(outputSchemas);
+                listOfRequest.AppendLine(pullRequestDiffs.ToString());
+
+
                 pullrequestComment = await _geminiServices.AnalyzeCodeToReviewAsync(listOfRequest.ToString());
                 return pullrequestComment;
             }

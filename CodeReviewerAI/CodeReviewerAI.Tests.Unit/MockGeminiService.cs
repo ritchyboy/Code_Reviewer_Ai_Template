@@ -6,7 +6,7 @@ namespace CodeReviewerAI.Tests.Unit
     public class MockGeminiService
     {
         [Fact]
-        public void initiate_mock_gemini_option_service()
+        public void Initiate_MockGeminiOptionService()
         {
             var mockOption = Options.Create(new GeminiOptions
             {
