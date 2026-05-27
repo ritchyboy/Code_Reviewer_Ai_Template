@@ -1,6 +1,6 @@
 # CodeReviewerAI
 
-CodeReviewerAI is a .NET-based backend utility designed to automate GitHub Pull Request code reviews using the Gemini API. It performs automated static analysis, identifies security and architectural flaws, and computes a risk assessment score before reporting feedback.
+CodeReviewerAI is a .NET-based backend utility designed to automate GitHub Pull Request code reviews using the Gemini API. It performs automated static analysis, identifies security and architectural flaws, and computes a risk assessment score before reporting feedback directly back to the pull request.
 
 The primary objective of Phase 1 was to establish a resilient core pipeline using decoupled, production-grade design patterns.
 
@@ -8,24 +8,34 @@ The primary objective of Phase 1 was to establish a resilient core pipeline usin
 
 ## Prerequisites and Configuration
 
-The application requires access to the GitHub API and the Google Gemini API. These must be configured via environment variables or your local `appsettings.json` file before launching the execution layer.
+The application requires configuration values to authenticate with the GitHub and Gemini APIs. The application leverages standard .NET hierarchical configuration mapping; keys can be provided either via a local `appsettings.json` file or injected as Environment Variables using the double-underscore (`__`) delimiter.
 
-### Required Credentials
+### Required Environment Configuration
 
-* **`GEMINI_API_KEY`**: A valid API key generated via Google AI Studio to authenticate requests to the Gemini 3.5 Flash engine.
-* **`GITHUB_TOKEN`**: A GitHub Personal Access Token (PAT) with repository read/write permissions to fetch the pull request diffs and publish the completed review comments.
+If deploying via a container, shell, or CI pipeline, export the following environment variables:
 
-### Configuration Layout
+* **`Gemini__ApiKey`**: A valid API key generated via Google AI Studio.
+* **`GitHub__Token`**: A GitHub Personal Access Token (PAT) with write permissions for Pull Requests.
+* **`Gemini__Model`**: Target model variant (e.g., `gemini-3.5-flash`).
+* **`Gemini__Provider`**: The AI infrastructure provider (set to `Google`).
+* **`Gemini__Temperature`**: Controls model output randomness (e.g., `1.0`).
+* **`GitHub__AppName`**: Identifier string used in user-agent string metadata (set to `CodeReviewerAI`).
 
-Ensure your local configuration or environment block maps to the following structural schema:
+### Local Configuration Layout
+
+For local development, create an `appsettings.json` file in the root execution directory mapping to this structural schema:
 
 ```json
 {
-  "GeminiProvider": {
-    "ApiKey": "YOUR_GEMINI_API_KEY"
+  "Gemini": {
+    "ApiKey": "YOUR_GEMINI_API_KEY",
+    "Model": "gemini-3.5-flash",
+    "Provider": "Google",
+    "Temperature": 1.0
   },
-  "GitHubProvider": {
-    "AuthToken": "YOUR_GITHUB_TOKEN"
+  "GitHub": {
+    "Token": "YOUR_GITHUB_TOKEN",
+    "AppName": "CodeReviewerAI"
   }
 }
 
@@ -35,27 +45,70 @@ Ensure your local configuration or environment block maps to the following struc
 
 ## Operational Model
 
-Phase 1 operates strictly as a Command Line Interface (CLI) utility designed for direct execution or manual integration into a continuous integration (CI) pipeline. It is not an automated background listener.
+Phase 1 operates strictly as a Command Line Interface (CLI) utility optimized to be invoked manually or downstream of a Continuous Integration (CI) runner. It expects three positional arguments passed during execution: `owner`, `repository_name`, and `pull_request_number`.
 
 ### Local Execution
 
-To invoke the review engine manually against a specific repository target, execute the compiled binary via the terminal:
+To run the application manually from the solution root directory, pass the targeted repository parameters:
 
 ```bash
-dotnet run --project CodeReviewerAI.Worker --owner "your-github-username" --repo "target-repository" --pr 42
+dotnet run --project CodeReviewerAI/CodeReviewerAI.csproj <owner> <repository_name> <pull_request_number>
 
 ```
 
 ### CI/CD Pipeline Integration
 
-To utilize this tool as a static analysis step within a GitHub Actions workflow, add the execution block directly into your repository's workflow configuration file:
+To automate code reviews on every pull request action, integrate the utility directly into a GitHub Actions workflow. Create a file at `.github/workflows/code-reviewer-ci.yml` with the configuration below:
 
 ```yaml
-- name: Run Automated Code Review
-  run: dotnet run --project CodeReviewerAI.Worker --owner ${{ github.repository_owner }} --repo ${{ github.event.repository.name }} --pr ${{ github.event.number }}
-  env:
-    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+name: Code Reviewer CI
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: CodeReviewerAI
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore and Build
+        run: |
+          dotnet restore CodeReviewerAI.sln
+          dotnet build --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        run: dotnet test CodeReviewerAI.Tests.Unit --configuration Release --no-build
+
+      - name: Run Reviewer CLI
+        run: >
+          dotnet run --project CodeReviewerAI/CodeReviewerAI.csproj
+          ${{ github.repository_owner }} 
+          ${{ github.event.repository.name }} 
+          ${{ github.event.pull_request.number }}
+        env:
+          Gemini__ApiKey: ${{ secrets.GEMINI_API_KEY }}
+          GitHub__Token: ${{ secrets.GITHUB_TOKEN }}
+          Gemini__Model: "gemini-3.5-flash"
+          Gemini__Provider: "Google"
+          Gemini__Temperature: "1.0"
+          GitHub__AppName: "CodeReviewerAI"
 
 ```
 
@@ -63,46 +116,46 @@ To utilize this tool as a static analysis step within a GitHub Actions workflow,
 
 ## Architectural Highlights
 
-* **Strategy Pattern for Language Parsing:** Leverages an `ILanguageStrategy` abstraction to isolate language-specific syntax rules and review parameters. This ensures the core review engine is fully open-closed; support for new languages can be introduced without modifying the execution orchestration layer.
-* **Resilience and Fault Tolerance:** Integrated a Polly resilience pipeline to handle distributed system volatility. The engine employs exponential backoff with randomized jitter to manage transient upstream network failures and rate limits safely without dropping the execution thread.
-* **Strict Separation of Concerns:** Core static analysis, file system management, and API gateway logic are completely decoupled into dedicated services, ensuring testability via mock interfaces.
+* **Strategy Pattern for Language Parsing:** Leverages an `ILanguageStrategy` abstraction to isolate language-specific syntax rules and review parameters. This ensures the core review engine remains closed to modification but open to extension for new languages.
+* **Resilience and Fault Tolerance:** Integrated a Polly resilience pipeline into the HTTP architecture. The client engine employs exponential backoff with randomized jitter to mitigate downstream service unavailability and transient capacity drops.
+* **Strict Separation of Concerns:** Application orchestration, file system utilities, and API gateways communicate across explicit abstractions, allowing components to be fully isolated and tested using mocks.
 
 ---
 
 ## Tech Stack
 
 * **Runtime:** .NET 8.0 / C#
-* **LLM Integration:** Google Gemini API (Targeting Gemini 3.5 Flash)
-* **Testing:** xUnit / FluentAssertions
+* **LLM Integration:** Google Gemini API
+* **Testing Engine:** xUnit / FluentAssertions
 
 ---
 
 ## Known Technical Debt and Core Limitations
 
-Phase 1 deliberately leaves specific architectural boundaries unresolved to prioritize initial pipeline delivery. These constraints are documented below as engineering debt to be resolved in Phase 2.
+Phase 1 deliberately leaves specific architectural boundaries unresolved to prioritize pipeline delivery. These constraints are documented below as engineering debt to be resolved in Phase 2.
 
 ### 1. Greedy Regex JSON Extraction
 
-* **Limitation:** The current extraction mechanism uses an un-anchored regular expression running in single-line mode to isolate JSON structures from the LLM text stream.
-* **Impact:** This approach is greedy. If the model outputs text outside of the primary JSON object that contains trailing curly braces, the regex window will overshoot, corrupting the payload and causing downstream deserialization failures.
+* **Limitation:** The parsing subsystem uses an un-anchored regular expression running in single-line mode to isolate JSON blocks from the LLM text output stream.
+* **Impact:** The approach is greedy. If the model outputs text outside of the primary JSON block that contains closing braces, the matching window will overshoot, corrupting the payload and causing downstream deserialization failures.
 
 ### 2. Environmental File-Path Dependency
 
-* **Limitation:** The `FileBaseStrategy` resolves prompt configuration files at runtime by referencing `AppDomain.CurrentDomain.BaseDirectory`.
-* **Impact:** This introduces an environment dependency. If the binary is executed outside its native build output folder, or deployed via single-file publish/Linux containers, file resolution will fail with a `FileNotFoundException`.
+* **Limitation:** The asset loading implementation resolves raw text files by referencing `AppDomain.CurrentDomain.BaseDirectory`.
+* **Impact:** This introduces an environment dependency. If the execution context shifts outside its native build layout folder (e.g., single-file publish formats or specific Linux environments), configuration resolution will throw a `FileNotFoundException`.
 
 ### 3. Context Window Vulnerability
 
-* **Limitation:** Pull request file diffs are aggregated synchronously into a single `StringBuilder` buffer before transmission to the API.
-* **Impact:** Massive pull requests with large lines-of-code diffs will exceed the input token limit or model generation constraints, leading to truncated reviews or unhandled API gateway rejections.
+* **Limitation:** Code diffs are aggregated synchronously into a single memory buffer before transmission to the network gateway.
+* **Impact:** Massive pull requests containing excessive line-of-code changes risk exceeding the model's context window size, causing the API endpoint to drop the connection or return truncated payloads.
 
 ---
 
 ## Phase 2 Roadmap
 
-The next iteration of the system will migrate the architecture from a local utility to an enterprise-grade automated service:
+The system design will scale from a local CLI execution harness into an enterprise-grade automated system:
 
-* **Deterministic Boundary Parser:** Replace the regular expression extraction layer with a linear, character-by-character brace-balancing state machine to extract nested JSON without structural boundary failures.
-* **Embedded Configuration Ingestion:** Migrate local text configuration assets into Embedded Resources, utilizing `GetManifestResourceStream` to ensure complete environmental independence.
-* **Semantic Chunking Utility:** Implement an abstract context manager that calculates input tokens and programmatically slices extensive code diffs into logical, independent chunks before processing.
-* **Asynchronous Background Processing:** Transition the application into a decoupled .NET Background Worker that processes incoming review requests asynchronously via a persistent data queue backed by SQLite/PostgreSQL.
+* **Deterministic Boundary Parser:** Replace regular expression string extractions with a linear, character-by-character brace-balancing state machine to process nested structures safely.
+* **Embedded Configuration Assets:** Migrate text assets into compilation payloads as Embedded Resources, reading them using `GetManifestResourceStream` to achieve absolute path independence.
+* **Semantic Chunking Utility:** Introduce a token tracking algorithm to compute payload weights and split extensive code diffs into logical, separate requests before network serialization.
+* **Asynchronous Background Processing:** Transition the execution layer into a persistent .NET Background Worker processing incoming payloads asynchronously via a persistent database queue (SQLite/PostgreSQL).
